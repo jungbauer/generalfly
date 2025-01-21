@@ -1,7 +1,9 @@
 package com.jungbauer.generalfly.controller.comics;
 
 import com.jungbauer.generalfly.domain.comics.Comic;
+import com.jungbauer.generalfly.dto.comics.ComicDto;
 import com.jungbauer.generalfly.repository.comics.ComicRepository;
+import com.jungbauer.generalfly.service.comics.ComicService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class ComicController {
 
     private final ComicRepository comicRepository;
+    private final ComicService comicService;
 
-    public ComicController(ComicRepository comicRepository) {
+    public ComicController(ComicRepository comicRepository, ComicService comicService) {
         this.comicRepository = comicRepository;
+        this.comicService = comicService;
     }
 
     @GetMapping({"", "/"})
@@ -26,14 +30,13 @@ public class ComicController {
 
     @GetMapping("/form")
     public String comicForm(Model model) {
-        model.addAttribute("comic", new Comic());
+        model.addAttribute("comicDto", new ComicDto());
         return "comics/form";
     }
 
     @PostMapping("/submit")
-    public String comicSubmit(@ModelAttribute Comic comic, Model model) {
-        System.out.println("=========== submit comic " + comic.getId() +" ==========");
-        Comic savedComic = comicRepository.save(comic);
+    public String comicSubmit(@ModelAttribute ComicDto comicDto, Model model) {
+        Comic savedComic = comicService.saveFromDto(comicDto);
         model.addAttribute("comic", savedComic);
         return "comics/single";
     }
@@ -50,7 +53,8 @@ public class ComicController {
     public String editComic(@RequestParam(name = "id") String comicId, Model model) {
         Optional<Comic> editComic = comicRepository.findById(Integer.parseInt(comicId));
         if (editComic.isPresent()) {
-            model.addAttribute("comic", editComic.orElse(null));
+            ComicDto comicDto = comicService.convertToDto(editComic.get());
+            model.addAttribute("comicDto", comicDto);
             return "comics/form";
         } else {
             // todo make proper error page

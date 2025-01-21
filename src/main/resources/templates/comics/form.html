@@ -8,7 +8,7 @@
 <body>
 <div layout:fragment="content" class="container">
     <h1>Form</h1>
-    <form action="#" th:action="@{/comics/submit}" th:object="${comic}" method="post">
+    <form action="#" th:action="@{/comics/submit}" th:object="${comicDto}" method="post">
         <p><input type="hidden" th:field="*{id}" /></p>
         <p>Title: <input type="text" th:field="*{title}" /></p>
         <p>linkMain: <input type="text" th:field="*{linkMain}" /></p>
