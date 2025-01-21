@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Single Comic</title>
+    <link rel="stylesheet" th:href="@{/css/generalTable.css}"/>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <table class="tg tg-striped">
+        <tr>
+            <td> Id </td><td><span th:text="${comic.id}"> Id </span></td>
+        </tr>
+        <tr>
+            <td> Title</td><td><span th:text="${comic.title}"> Title </span></td>
+        </tr>
+        <tr>
+            <td> linkMain</td><td><a target="_blank" th:href="${comic.linkMain}" th:text="${comic.linkMain}"></a></td>
+        </tr>
+        <tr>
+            <td> linkAlternate</td><td><span th:text="${comic.linkAlternate}"> linkAlternate </span></td>
+        </tr>
+        <tr>
+            <td> useAlternateLink</td><td><span th:text="${comic.useAlternateLink}"> useAlternateLink </span></td>
+        </tr>
+        <tr>
+            <td> chapterTotal</td><td><span th:text="${comic.chapterTotal}"> chapterTotal </span></td>
+        </tr>
+        <tr>
+            <td> chapterCurrent</td><td><span th:text="${comic.chapterCurrent}"> chapterCurrent </span></td>
+        </tr>
+        <tr>
+            <td> notes</td><td><span th:text="${comic.notes}"> notes </span></td>
+        </tr>
+        <tr>
+            <td> createdOn</td><td><span th:text="${comic.createdOn}"> createdOn </span></td>
+        </tr>
+        <tr>
+            <td> updatedOn</td><td><span th:text="${comic.updatedOn}"> updatedOn </span></td>
+        </tr>
+    </table>
+    <hr>
+    <h3>Actions</h3>
+    <div>
+        <a class="btn btn-success" th:href="@{/comics/increment(id=${comic.id})}">Increment</a>
+        <a class="btn btn-warning" th:href="@{/comics/edit(id=${comic.id})}">Edit</a>
+    </div>
+</div>
+</body>
+</html>

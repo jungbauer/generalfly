@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Comic Form Submission</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <h1>Form</h1>
+    <form action="#" th:action="@{/comics/submit}" th:object="${comic}" method="post">
+        <p><input type="hidden" th:field="*{id}" /></p>
+        <p>Title: <input type="text" th:field="*{title}" /></p>
+        <p>linkMain: <input type="text" th:field="*{linkMain}" /></p>
+        <p>linkAlternate: <input type="text" th:field="*{linkAlternate}" /></p>
+        <p>useAlternateLink: <input type="checkbox" th:field="*{useAlternateLink}" /></p>
+        <p>chapterTotal: <input type="number" th:field="*{chapterTotal}" /></p>
+        <p>chapterCurrent: <input type="number" th:field="*{chapterCurrent}" /></p>
+        <p>notes: <input type="text" th:field="*{notes}" /></p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+</div>
+</body>
+</html>

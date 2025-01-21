@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Comics</title>
+    <link rel="stylesheet" th:href="@{/css/generalTable.css}"/>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <p>Front page for comics.</p>
+    <p th:if="${#lists.isEmpty(comics)}">No comics Available</p>
+    <table th:unless="${#lists.isEmpty(comics)}" class="tg tg-striped">
+        <thead>
+        <tr>
+            <th> Comic </th>
+            <th> Chapters </th>
+            <th> notes </th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comic : ${comics}">
+            <td><a target="_blank" th:href="${comic.linkMain}" th:text="${comic.title}"></a></td>
+            <td><span th:text="${comic.chapterCurrent} + ' (' + ${comic.chapterTotal} + ')'"> chapters </span></td>
+            <td><span th:text="${comic.notes}"> notes </span></td>
+            <td><a class="btn btn-secondary" th:href="@{/comics/view(id=${comic.id})}">view</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
