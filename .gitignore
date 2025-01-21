@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 dbData/
+dump/
 
 ### STS ###
 .apt_generated
