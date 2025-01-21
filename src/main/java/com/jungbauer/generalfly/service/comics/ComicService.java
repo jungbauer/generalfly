@@ -9,6 +9,7 @@ import com.jungbauer.generalfly.dto.comics.ComicDto;
 import com.jungbauer.generalfly.repository.comics.ComicRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,5 +103,15 @@ public class ComicService {
             }
         }
         return count;
+    }
+
+    public String getAllComicsJson() throws JsonProcessingException {
+        List<Comic> comics = (List<Comic>) comicRepository.findAll();
+        List<ComicDto> dtoList = new ArrayList<>();
+        for (Comic comic : comics) {
+            dtoList.add(convertToDto(comic));
+        }
+
+        return objectMapper.writeValueAsString(dtoList);
     }
 }

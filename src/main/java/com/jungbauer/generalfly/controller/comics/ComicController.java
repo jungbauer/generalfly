@@ -4,10 +4,17 @@ import com.jungbauer.generalfly.domain.comics.Comic;
 import com.jungbauer.generalfly.dto.comics.ComicDto;
 import com.jungbauer.generalfly.repository.comics.ComicRepository;
 import com.jungbauer.generalfly.service.comics.ComicService;
+import com.jungbauer.generalfly.utils.FileUtils;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Controller
@@ -75,5 +82,30 @@ public class ComicController {
             // todo make proper error page
             return "/error";
         }
+    }
+
+    @GetMapping("/exportAll")
+    public ResponseEntity<ByteArrayResource> exportAll() throws IOException {
+        String fileName = "comics.json";
+        String fileContent = comicService.getAllComicsJson();
+        ByteArrayResource byteArrayResource = new ByteArrayResource(fileContent.getBytes(StandardCharsets.UTF_8));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileName)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(byteArrayResource);
+    }
+
+    @GetMapping("/import")
+    public String importComics(Model model) throws IOException {
+        String content = FileUtils.readFile("dump/comics.json");
+        System.out.println("=========================");
+//        System.out.println(content);
+        int total = comicService.importComicsFromJson(content);
+        System.out.println("Total imported: " + total);
+        System.out.println("=========================");
+
+        model.addAttribute("comics", comicRepository.findAll());
+        return "comics/index";
     }
 }
