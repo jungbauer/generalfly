@@ -1,19 +1,26 @@
 package com.jungbauer.generalfly.service.comics;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jungbauer.generalfly.domain.comics.Comic;
 import com.jungbauer.generalfly.dto.comics.ComicDto;
 import com.jungbauer.generalfly.repository.comics.ComicRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ComicService {
 
     private final ComicRepository comicRepository;
+    private final ObjectMapper objectMapper;
 
     public ComicService(ComicRepository comicRepository) {
         this.comicRepository = comicRepository;
+        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     public ComicDto convertToDto(Comic comic) {
@@ -71,5 +78,29 @@ public class ComicService {
     public Comic saveFromDto(ComicDto comicDto) {
         Comic comic =  getComicFromDto(comicDto);
         return comicRepository.save(comic);
+    }
+
+    public List<ComicDto> getComicsFromJson(String json) throws JsonProcessingException {
+        List<ComicDto> comicList = objectMapper.readValue(json, new TypeReference<List<ComicDto>>() {});
+        for (ComicDto comic : comicList) {
+            System.out.printf("Comic:%d %s %s%n", comic.id, comic.title, comic.linkMain);
+        }
+        System.out.println("Comics from json: " + comicList.size());
+        return comicList;
+    }
+
+    public int importComicsFromJson(String json) throws JsonProcessingException {
+        List<ComicDto> comicList = getComicsFromJson(json);
+        int count = 0;
+        for (ComicDto comic : comicList) {
+            Optional<Comic> optionalComic = comicRepository.findByTitleAndLinkMain(comic.title, comic.linkMain);
+            if (optionalComic.isEmpty()) {
+                saveFromDto(comic);
+                count++;
+            } else {
+                System.out.println("Duplicate comic: " + comic.title + ", " + comic.linkMain);
+            }
+        }
+        return count;
     }
 }
