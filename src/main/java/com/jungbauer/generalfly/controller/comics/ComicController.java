@@ -4,7 +4,6 @@ import com.jungbauer.generalfly.domain.comics.Comic;
 import com.jungbauer.generalfly.dto.comics.ComicDto;
 import com.jungbauer.generalfly.repository.comics.ComicRepository;
 import com.jungbauer.generalfly.service.comics.ComicService;
-import com.jungbauer.generalfly.utils.FileUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
