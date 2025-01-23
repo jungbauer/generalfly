@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 dbData/
 dump/
+.DS_Store
 
 ### STS ###
 .apt_generated
