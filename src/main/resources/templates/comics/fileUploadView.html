@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Imported File</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <h2>Submitted File</h2>
+    <table>
+        <tr>
+            <td>OriginalFileName:</td>
+            <td th:text="${file.originalFilename}">originalFilename</td>
+        </tr>
+        <tr>
+            <td>Type:</td>
+            <td th:text="${file.contentType}">file.contentType</td>
+        </tr>
+        <tr>
+            <td>Imported Total:</td>
+            <td th:text="${imported}">imported</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

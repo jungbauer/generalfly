@@ -9,6 +9,7 @@
 <body>
 <div layout:fragment="content" class="container">
     <p>Front page for comics.</p>
+    <p th:text="'Total comics: ' + ${#lists.size(comics)}">count</p>
     <p th:if="${#lists.isEmpty(comics)}">No comics Available</p>
     <table th:unless="${#lists.isEmpty(comics)}" class="tg tg-striped">
         <thead>

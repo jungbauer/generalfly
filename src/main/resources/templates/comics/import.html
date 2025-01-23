@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Comic Import</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <h1>Import from json file.</h1>
+    <form method="POST" th:action="@{/comics/uploadFile}" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td><label for="file">Select a file to upload</label></td>
+                <td><input type="file" name="file" id="file" /></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Submit" /></td>
+            </tr>
+        </table>
+        </form>
+</div>
+</body>
+</html>

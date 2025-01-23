@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -97,15 +98,17 @@ public class ComicController {
     }
 
     @GetMapping("/import")
-    public String importComics(Model model) throws IOException {
-        String content = FileUtils.readFile("dump/comics.json");
-        System.out.println("=========================");
-//        System.out.println(content);
-        int total = comicService.importComicsFromJson(content);
-        System.out.println("Total imported: " + total);
-        System.out.println("=========================");
-
-        model.addAttribute("comics", comicRepository.findAll());
-        return "comics/index";
+    public String importComics(Model model) {
+        return "comics/import";
     }
+
+    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+    public String uploadFile(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+        String fileContent = new String(file.getBytes(), StandardCharsets.UTF_8);
+        int imported = comicService.importComicsFromJson(fileContent);
+        model.addAttribute("imported", imported);
+        model.addAttribute("file", file);
+        return "comics/fileUploadView";
+    }
+
 }
