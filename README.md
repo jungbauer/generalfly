@@ -23,3 +23,7 @@ Run development db in Docker: `docker compose up`
 Connect terminal: `docker exec -it general-db bash`
 
 Run psql when in terminal: `psql -U postgres`
+
+Build Docker image: `docker build -t generalfly:first .`
+
+Run Docker image with localhost networking: `docker run --network host -e "SPRING_PROFILES_ACTIVE=dockerdev" generalfly:first`
