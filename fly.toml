@@ -9,6 +9,9 @@ primary_region = 'fra'
 [build]
   image = 'generalfly:latest'
 
+[env]
+  SPRING_PROFILES_ACTIVE = "prod"
+
 [http_service]
   internal_port = 8080
   force_https = true
