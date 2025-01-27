@@ -4,6 +4,7 @@ import com.jungbauer.generalfly.domain.comics.Comic;
 import com.jungbauer.generalfly.dto.comics.ComicDto;
 import com.jungbauer.generalfly.repository.comics.ComicRepository;
 import com.jungbauer.generalfly.service.comics.ComicService;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,19 +13,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/comics")
 public class ComicController {
 
+    private final Environment environment;
     private final ComicRepository comicRepository;
     private final ComicService comicService;
 
-    public ComicController(ComicRepository comicRepository, ComicService comicService) {
+    public ComicController(Environment environment, ComicRepository comicRepository, ComicService comicService) {
+        this.environment = environment;
         this.comicRepository = comicRepository;
         this.comicService = comicService;
     }
@@ -70,17 +75,27 @@ public class ComicController {
     }
 
     @GetMapping("/increment")
-    public String incrementComic(@RequestParam(name = "id") String comicId, Model model) {
+    public ModelAndView incrementComic(@RequestParam(name = "id") String comicId, Model model) {
         Optional<Comic> optionalComicComic = comicRepository.findById(Integer.parseInt(comicId));
         if (optionalComicComic.isPresent()) {
             Comic comic = optionalComicComic.get();
             comic.incrementChapterCurrent();
             Comic savedComic = comicRepository.save(comic);
             model.addAttribute("comic", savedComic);
-            return "comics/single";
+
+            //todo: The relative redirect, /, causes errors if the browser is using a strict https mode
+            // might be able to fix if we setup server certificates, eg letsencrypt
+            // current workaround is to use absolute url.
+            String[] profiles = this.environment.getActiveProfiles();
+            if (Arrays.asList(profiles).contains("prod")) {
+                String urlBase = environment.getProperty("generalfly.redirect.url.base");
+                return new ModelAndView("redirect:" + urlBase + "/comics/view?id=" + savedComic.getId());
+            }
+
+            return new ModelAndView("redirect:/comics/view?id=" + savedComic.getId());
         } else {
             // todo make proper error page
-            return "/error";
+            return new ModelAndView("/error");
         }
     }
 
