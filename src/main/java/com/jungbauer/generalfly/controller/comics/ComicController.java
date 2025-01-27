@@ -47,10 +47,20 @@ public class ComicController {
     }
 
     @PostMapping("/submit")
-    public String comicSubmit(@ModelAttribute ComicDto comicDto, Model model) {
+    public ModelAndView comicSubmit(@ModelAttribute ComicDto comicDto, Model model) {
         Comic savedComic = comicService.saveFromDto(comicDto);
         model.addAttribute("comic", savedComic);
-        return "comics/single";
+
+        //todo: The relative redirect, /, causes errors if the browser is using a strict https mode
+        // might be able to fix if we setup server certificates, eg letsencrypt
+        // current workaround is to use absolute url.
+        String[] profiles = this.environment.getActiveProfiles();
+        if (Arrays.asList(profiles).contains("prod")) {
+            String urlBase = environment.getProperty("generalfly.redirect.url.base");
+            return new ModelAndView("redirect:" + urlBase + "/comics/view?id=" + savedComic.getId());
+        }
+
+        return new ModelAndView("redirect:/comics/view?id=" + savedComic.getId());
     }
 
     @GetMapping("/view")
