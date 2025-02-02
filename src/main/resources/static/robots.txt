@@ -1,0 +1,12 @@
+User-agent: *
+
+Disallow: /comics
+Disallow: /comics/
+Disallow: /comics/form
+Disallow: /comics/submit
+Disallow: /comics/view
+Disallow: /comics/edit
+Disallow: /comics/increment
+Disallow: /comics/exportAll
+Disallow: /comics/import
+Disallow: /comics/uploadFile
