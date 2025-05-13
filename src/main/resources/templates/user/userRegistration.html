@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>User Registration</title>
+
+    <style type="text/css">
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <section class="my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Registration Form</h1>
+                    <form action="#" th:action="@{/user/registration}" th:object="${userDto}" method="POST">
+                        <div>
+                            <label>
+                                first name
+                                <input type="text" th:field="*{firstName}" required="required" />
+                            </label>
+                            <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="error">
+                                Validation error</p>
+                        </div>
+                        <div>
+                            <label>
+                                last name
+                                <input type="text" th:field="*{lastName}" required="required" />
+                            </label>
+                            <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="error">
+                                Validation error</p>
+                        </div>
+                        <div>
+                            <label>
+                                email
+                                <input type="email" th:field="*{email}" required="required" />
+                            </label>
+                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error">Validation
+                                error</p>
+                        </div>
+                        <div>
+                            <label>
+                                password
+                                <input type="password" th:field="*{password}" required="required" />
+                            </label>
+                            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error">
+                                Validation error</p>
+                        </div>
+                        <div>
+                            <label>
+                                confirm password
+                                <input type="password" th:field="*{matchingPassword}" required="required" />
+                            </label>
+                        </div>
+                        <button type="submit">submit</button>
+
+                        <div th:if="${#fields.hasAnyErrors()}">
+                            <ul>
+                                <li th:each="err : ${#fields.allErrors()}" th:text="${err}" class="error" />
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</body>
+
+</html>
