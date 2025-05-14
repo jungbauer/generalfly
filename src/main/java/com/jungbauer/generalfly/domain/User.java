@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_account")
@@ -37,6 +38,14 @@ public class User {
 
     @UpdateTimestamp
     private Instant updatedOn;
+
+    // using eager fetch because this should always be populated.
+    // User is the owner of the relationship.
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
 
     @Override
     public String toString() {
