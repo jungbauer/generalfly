@@ -44,13 +44,15 @@ public class WebSecurityConfig {
     }
 
     /**
-     * Default fallback SecurityFilterChain that forces everything to auth.
+     * Default SecurityFilterChain. AllowedPaths are open. Other requests require authentication.
      */
     @Bean
-    public SecurityFilterChain fallbackFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+        String[] allowedPaths = { "/", "/login*", "/logout*", "/error*", "/js/**", "/css/**", "/robots.txt" };
         http
             .authorizeHttpRequests(authorize -> authorize
-                    .anyRequest().authenticated()
+                .requestMatchers(allowedPaths).permitAll()
+                .anyRequest().authenticated()
             )
             .formLogin(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
