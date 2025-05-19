@@ -56,7 +56,9 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .anyRequest().hasRole("ADMIN") // "ROLE_" is auto prepended, apparently hasAuthority("ROLE_ADMIN") can be used.
             )
-            .httpBasic(Customizer.withDefaults());
+            .formLogin(form -> form
+                    .defaultSuccessUrl("/", false).permitAll()
+            );
         return http.build();
     }
 
@@ -71,8 +73,15 @@ public class WebSecurityConfig {
                 .requestMatchers(allowedPaths).permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(Customizer.withDefaults())
-            .httpBasic(Customizer.withDefaults());
+            .formLogin(form -> form
+                .defaultSuccessUrl("/", false).permitAll()
+            )
+            .logout(logout -> logout
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .logoutSuccessUrl("/")
+                .permitAll()
+            );
         return http.build();
     }
 }
