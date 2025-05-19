@@ -3,6 +3,7 @@ package com.jungbauer.generalfly;
 import com.jungbauer.generalfly.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -41,6 +42,22 @@ public class WebSecurityConfig {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(authProvider())
                 .build();
+    }
+
+    /**
+     * Admin role SecurityFilterChain
+     */
+    @Bean
+    @Order(1)
+    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
+        String[] approvalsPaths = { "/actuator/**", "/user/**" };
+        http
+            .securityMatcher(approvalsPaths)
+            .authorizeHttpRequests(authorize -> authorize
+                .anyRequest().hasRole("ADMIN") // "ROLE_" is auto prepended, apparently hasAuthority("ROLE_ADMIN") can be used.
+            )
+            .httpBasic(Customizer.withDefaults());
+        return http.build();
     }
 
     /**
