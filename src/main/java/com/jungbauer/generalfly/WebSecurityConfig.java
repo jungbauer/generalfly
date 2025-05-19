@@ -67,7 +67,7 @@ public class WebSecurityConfig {
      */
     @Bean
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
-        String[] allowedPaths = { "/", "/login*", "/logout*", "/error*", "/js/**", "/css/**", "/robots.txt" };
+        String[] allowedPaths = { "/", "/login*", "/logout*", "/error*", "/js/**", "/css/**", "/robots.txt", "/favicon.ico" };
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(allowedPaths).permitAll()
