@@ -6,13 +6,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
+import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
+import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive;
 
 @Configuration
 @EnableWebSecurity
@@ -68,6 +70,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         String[] allowedPaths = { "/", "/login*", "/logout*", "/error*", "/js/**", "/css/**", "/robots.txt", "/favicon.ico" };
+        HeaderWriterLogoutHandler clearSiteData = new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(Directive.ALL));
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(allowedPaths).permitAll()
@@ -81,6 +84,7 @@ public class WebSecurityConfig {
                 .clearAuthentication(true)
                 .logoutSuccessUrl("/")
                 .permitAll()
+                .addLogoutHandler(clearSiteData)
             );
         return http.build();
     }
