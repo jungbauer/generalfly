@@ -32,11 +32,21 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/">Home</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <li sec:authorize="hasRole('ADMIN')" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Admin
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminNavbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="/user/registration">User Registration</a></li>
+                        <li><a class="dropdown-item" href="/actuator/health">App Health</a></li>
+                        <li><a class="dropdown-item" href="/actuator/mappings">App Mappings</a></li>
+                    </ul>
+                </li>
+                <li sec:authorize="hasRole('USER')" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="comicNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Comics
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu" aria-labelledby="comicNavbarDropdownMenuLink">
                         <li><a class="dropdown-item" href="/comics">List Comics</a></li>
                         <li><a class="dropdown-item" href="/comics/form">Add Comic</a></li>
                         <li><a class="dropdown-item" href="/comics/exportAll">Export All</a></li>
