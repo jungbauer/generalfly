@@ -1,5 +1,6 @@
 package com.jungbauer.generalfly.domain.comics;
 
+import com.jungbauer.generalfly.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,6 +38,10 @@ public class Comic {
 
     @UpdateTimestamp
     private Instant updatedOn;
+
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable = false)
+    private User user;
 
     public void incrementChapterCurrent() {
         chapterCurrent += 1.0f;
