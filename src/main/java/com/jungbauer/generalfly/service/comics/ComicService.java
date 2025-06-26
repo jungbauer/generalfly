@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jungbauer.generalfly.domain.User;
 import com.jungbauer.generalfly.domain.comics.Comic;
 import com.jungbauer.generalfly.dto.comics.ComicDto;
 import com.jungbauer.generalfly.repository.comics.ComicRepository;
@@ -63,12 +64,12 @@ public class ComicService {
         return comic;
     }
 
-    public Comic getComicFromDto(ComicDto comicDto) {
+    public Comic getComicFromDto(ComicDto comicDto, User user) {
         if (comicDto.id == null) {
             return updateWithDto(comicDto, new Comic());
         }
 
-        Optional<Comic> optionalComic = comicRepository.findById(comicDto.id);
+        Optional<Comic> optionalComic = comicRepository.findByUserIdAndId(user.getId(), comicDto.id);
         if (optionalComic.isPresent()) {
             return updateWithDto(comicDto, optionalComic.get());
         } else {
@@ -76,8 +77,9 @@ public class ComicService {
         }
     }
 
-    public Comic saveFromDto(ComicDto comicDto) {
-        Comic comic =  getComicFromDto(comicDto);
+    public Comic saveFromDto(ComicDto comicDto, User user) {
+        Comic comic =  getComicFromDto(comicDto, user);
+        comic.setUser(user);
         return comicRepository.save(comic);
     }
 
@@ -90,13 +92,13 @@ public class ComicService {
         return comicList;
     }
 
-    public int importComicsFromJson(String json) throws JsonProcessingException {
+    public int importComicsFromJson(String json, User user) throws JsonProcessingException {
         List<ComicDto> comicList = getComicsFromJson(json);
         int count = 0;
         for (ComicDto comic : comicList) {
-            Optional<Comic> optionalComic = comicRepository.findByTitleAndLinkMain(comic.title, comic.linkMain);
+            Optional<Comic> optionalComic = comicRepository.findByUserIdAndTitleAndLinkMain(user.getId(), comic.title, comic.linkMain);
             if (optionalComic.isEmpty()) {
-                saveFromDto(comic);
+                saveFromDto(comic, user);
                 count++;
             } else {
                 System.out.println("Duplicate comic: " + comic.title + ", " + comic.linkMain);
@@ -105,8 +107,8 @@ public class ComicService {
         return count;
     }
 
-    public String getAllComicsJson() throws JsonProcessingException {
-        List<Comic> comics = (List<Comic>) comicRepository.findAll();
+    public String getAllComicsJson(User user) throws JsonProcessingException {
+        List<Comic> comics = comicRepository.findAllByUserId(user.getId());
         List<ComicDto> dtoList = new ArrayList<>();
         for (Comic comic : comics) {
             dtoList.add(convertToDto(comic));
