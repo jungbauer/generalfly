@@ -1,11 +1,13 @@
 package com.jungbauer.generalfly.dto;
 
+import com.jungbauer.generalfly.validation.PasswordsMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+@PasswordsMatch
 @Getter
 @Setter
 public class UserDto {

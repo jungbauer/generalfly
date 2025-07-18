@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
 
 <head>
     <meta charset="UTF-8">
@@ -18,16 +22,31 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <div sec:authorize="isAuthenticated()">
+            <span sec:authentication="name">Auth Name</span>
+            <a class="btn btn-warning" th:href="@{/logout}">Logout</a>
+        </div>
+        <div th:unless="${#authorization.expression('isAuthenticated()')}"><a class="btn btn-success" th:href="@{/login}">Login</a></div>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" href="/">Home</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <li sec:authorize="hasRole('ADMIN')" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Admin
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminNavbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="/user/registration">User Registration</a></li>
+                        <li><a class="dropdown-item" href="/actuator/health">App Health</a></li>
+                        <li><a class="dropdown-item" href="/actuator/mappings">App Mappings</a></li>
+                    </ul>
+                </li>
+                <li sec:authorize="hasRole('USER')" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="comicNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Comics
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu" aria-labelledby="comicNavbarDropdownMenuLink">
                         <li><a class="dropdown-item" href="/comics">List Comics</a></li>
                         <li><a class="dropdown-item" href="/comics/form">Add Comic</a></li>
                         <li><a class="dropdown-item" href="/comics/exportAll">Export All</a></li>
