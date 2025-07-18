@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Controller
@@ -94,15 +93,6 @@ public class ComicController {
             comic.incrementChapterCurrent();
             Comic savedComic = comicRepository.save(comic);
             model.addAttribute("comic", savedComic);
-
-            //todo: The relative redirect, /, causes errors if the browser is using a strict https mode
-            // might be able to fix if we setup server certificates, eg letsencrypt
-            // current workaround is to use absolute url.
-            String[] profiles = this.environment.getActiveProfiles();
-            if (Arrays.asList(profiles).contains("prod")) {
-                String urlBase = environment.getProperty("generalfly.redirect.url.base");
-                return new ModelAndView("redirect:" + urlBase + "/comics/view?id=" + savedComic.getId());
-            }
 
             return new ModelAndView("redirect:/comics/view?id=" + savedComic.getId());
         } else {
