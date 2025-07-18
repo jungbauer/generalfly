@@ -35,3 +35,8 @@ Attach a Fly app to a Fly db: `fly postgres attach <postgres app name> --app <ap
 Deploy to Fly.io after building locally: `fly deploy --ha=false --local-only --image generalfly:latest`
 
 Tail app logs: `fly logs -a generalfly-jung`
+
+# Live deploy
+- Run local build script: `./build-image.sh`
+- Deploy to fly.io: `fly deploy --ha=false --local-only --image generalfly:latest`
+
