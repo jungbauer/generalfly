@@ -40,3 +40,6 @@ Tail app logs: `fly logs -a generalfly-jung`
 - Run local build script: `./build-image.sh`
 - Deploy to fly.io: `fly deploy --ha=false --local-only --image generalfly:latest`
 
+# Live maintenance
+Connect to db: 'fly postgres connect - <db-name>'
+
