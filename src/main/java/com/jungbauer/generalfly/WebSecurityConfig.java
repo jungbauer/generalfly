@@ -15,6 +15,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -33,8 +38,8 @@ public class WebSecurityConfig {
 
     @Bean
     public DaoAuthenticationProvider authProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(customUserDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(customUserDetailsService);
+//        authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
@@ -44,6 +49,17 @@ public class WebSecurityConfig {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(authProvider())
                 .build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/nhl/**", configuration);
+        return source;
     }
 
     /**
@@ -69,9 +85,9 @@ public class WebSecurityConfig {
      */
     @Bean
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
-        String[] allowedPaths = { "/", "/login*", "/logout*", "/error*", "/js/**", "/css/**", "/robots.txt", "/favicon.ico" };
+        String[] allowedPaths = { "/", "/login*", "/logout*", "/error*", "/js/**", "/css/**", "/robots.txt", "/favicon.ico", "/nhl/**" };
         HeaderWriterLogoutHandler clearSiteData = new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(Directive.ALL));
-        http
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(allowedPaths).permitAll()
                 .anyRequest().authenticated()
