@@ -1,5 +1,6 @@
 package com.jungbauer.generalfly.service.nhl;
 
+import com.jungbauer.generalfly.dto.nhl.api.ClubSeasonSchedule;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -16,6 +17,10 @@ public class NhlApiService {
 
     public Standings getStandingsNow() {
         return restClient.get().uri("/standings/now").retrieve().body(Standings.class);
+    }
+
+    public ClubSeasonSchedule getClubSeasonSchedule(String teamCode, String season) {
+        return restClient.get().uri("/club-schedule-season/{teamCode}/{season}", teamCode, season).retrieve().body(ClubSeasonSchedule.class);
     }
 
 }

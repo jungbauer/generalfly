@@ -1,9 +1,11 @@
 package com.jungbauer.generalfly.controller.nhl;
 
+import com.jungbauer.generalfly.dto.nhl.api.ClubSeasonSchedule;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import com.jungbauer.generalfly.service.nhl.NhlApiService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,5 +20,10 @@ public class NhlController {
     @GetMapping("/standings")
     public Standings standings() {
         return nhlApiService.getStandingsNow();
+    }
+
+    @GetMapping("/club-schedule")
+    public ClubSeasonSchedule clubSchedule(@RequestParam(name = "team") String teamCode, @RequestParam(name = "season") String season) {
+        return nhlApiService.getClubSeasonSchedule(teamCode, season);
     }
 }
