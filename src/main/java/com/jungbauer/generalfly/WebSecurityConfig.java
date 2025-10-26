@@ -1,6 +1,7 @@
 package com.jungbauer.generalfly;
 
 import com.jungbauer.generalfly.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -26,6 +27,9 @@ import java.util.Arrays;
 public class WebSecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+
+    @Value("${github.pages.site}")
+    private String githubPagesSite;
 
     public WebSecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
@@ -54,7 +58,7 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList(githubPagesSite));
         configuration.setAllowedMethods(Arrays.asList("GET"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
