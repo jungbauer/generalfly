@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(schema = "nhl", name = "games")
@@ -35,7 +36,7 @@ public class Game {
     private String gameOutcome;
     private Integer homeTeamScore;
     private Integer awayTeamScore;
-    private String gameDate;
+    private LocalDate gameDate;
 
     @ManyToOne
     @JoinColumn(name = "away_team_id")
