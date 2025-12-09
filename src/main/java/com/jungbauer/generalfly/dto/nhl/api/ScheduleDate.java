@@ -11,7 +11,7 @@ import java.util.Map;
 public class ScheduleDate {
     private String nextStartDate;
     private String previousStartDate;
-    private List<GameWeek> gameWeek;
+    private List<GameDay> gameWeek;
     private List<OddsPartner> oddsPartners;
     private String preSeasonStartDate;
     private String regularSeasonStartDate;
@@ -21,7 +21,7 @@ public class ScheduleDate {
 
     @Getter
     @Setter
-    public static class GameWeek {
+    public static class GameDay {
         private String date;
         private String dayAbbrev;
         private Integer numberOfGames;
