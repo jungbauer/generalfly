@@ -2,6 +2,7 @@ package com.jungbauer.generalfly.service.nhl;
 
 import com.jungbauer.generalfly.dto.nhl.api.ClubSeasonSchedule;
 import com.jungbauer.generalfly.dto.nhl.api.GameCenterPlayByPlay;
+import com.jungbauer.generalfly.dto.nhl.api.ScheduleDate;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -26,6 +27,10 @@ public class NhlApiService {
 
     public GameCenterPlayByPlay getGameCenterPlayByPlay(String gameId) {
         return restClient.get().uri("/gamecenter/{gameId}/play-by-play", gameId).retrieve().body(GameCenterPlayByPlay.class);
+    }
+
+    public ScheduleDate getScheduleByDate(String date) {
+        return restClient.get().uri("/schedule/{date}", date).retrieve().body(ScheduleDate.class);
     }
 
 }
