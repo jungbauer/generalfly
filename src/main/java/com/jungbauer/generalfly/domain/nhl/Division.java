@@ -30,4 +30,9 @@ public class Division {
 
     private String abbrev;
     private String name;
+
+    public Division(String abbrev, String name) {
+        this.abbrev = abbrev;
+        this.name = name;
+    }
 }

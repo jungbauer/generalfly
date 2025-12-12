@@ -1,13 +1,20 @@
 package com.jungbauer.generalfly.service.nhl;
 
+import com.jungbauer.generalfly.domain.nhl.Conference;
+import com.jungbauer.generalfly.domain.nhl.Division;
 import com.jungbauer.generalfly.domain.nhl.Game;
 import com.jungbauer.generalfly.domain.nhl.Team;
 import com.jungbauer.generalfly.dto.nhl.api.ScheduleDate;
+import com.jungbauer.generalfly.dto.nhl.api.Standings;
+import com.jungbauer.generalfly.dto.nhl.api.StandingsTeam;
+import com.jungbauer.generalfly.repository.nhl.ConferenceRepository;
+import com.jungbauer.generalfly.repository.nhl.DivisionRepository;
 import com.jungbauer.generalfly.repository.nhl.GameRepository;
 import com.jungbauer.generalfly.repository.nhl.TeamRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;import java.util.List;
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class NhlDataService {
@@ -15,12 +22,17 @@ public class NhlDataService {
     private final NhlApiService nhlApiService;
     private final TeamRepository teamRepository;
     private final GameRepository gameRepository;
+    private final ConferenceRepository conferenceRepository;
+    private final DivisionRepository divisionRepository;
 
     public NhlDataService(NhlApiService nhlApiService, TeamRepository teamRepository,
-                          GameRepository gameRepository) {
+                          GameRepository gameRepository, ConferenceRepository conferenceRepository,
+                          DivisionRepository divisionRepository) {
         this.nhlApiService = nhlApiService;
         this.teamRepository = teamRepository;
         this.gameRepository = gameRepository;
+        this.conferenceRepository = conferenceRepository;
+        this.divisionRepository = divisionRepository;
     }
 
     // todo throwing an exception here is bad, should handle it here
@@ -102,5 +114,39 @@ public class NhlDataService {
             return teamRepository.save(newTeam);
         }
         return dbTeam;
+    }
+
+    /**
+     * This populates team db entries with their conference and division.
+     * We assume teams already have db entries.
+     */
+    public void populateDivisionAndConference() {
+        Standings standings = nhlApiService.getStandingsNow();
+        for (StandingsTeam apiTeam : standings.getStandings()) {
+            String conferenceName = apiTeam.getConferenceName();
+            String conferenceAbbrev = apiTeam.getConferenceAbbrev();
+            String divisionName = apiTeam.getDivisionName();
+            String divisionAbbrev = apiTeam.getDivisionAbbrev();
+
+            // standings data does NOT include the NHL id, thus using abbreviation.
+            Team dbTeam = teamRepository.findByAbbrev(apiTeam.getTeamAbbrev().getDefault());
+            boolean updateTeam = dbTeam.getConference() == null || dbTeam.getDivision() == null;
+
+            Conference conference = conferenceRepository.findByNameAndAbbrev(conferenceName, conferenceAbbrev);
+            if (conference == null) {
+                conference = conferenceRepository.save(new Conference(conferenceAbbrev, conferenceName));
+            }
+
+            Division division = divisionRepository.findByNameAndAbbrev(divisionName, divisionAbbrev);
+            if (division == null) {
+                division = divisionRepository.save(new Division(divisionAbbrev, divisionName));
+            }
+
+            if (updateTeam) {
+                dbTeam.setConference(conference);
+                dbTeam.setDivision(division);
+                teamRepository.save(dbTeam);
+            }
+        }
     }
 }

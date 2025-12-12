@@ -30,4 +30,9 @@ public class Conference {
 
     private String abbrev;
     private String name;
+
+    public Conference(String abbrev, String name) {
+        this.abbrev = abbrev;
+        this.name = name;
+    }
 }
