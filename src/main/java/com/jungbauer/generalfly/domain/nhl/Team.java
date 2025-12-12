@@ -42,4 +42,6 @@ public class Team {
     @JoinColumn(name = "division_id")
     private Division division;
 
+    // todo my need to add franchise info in the future as teams change names and locations, eg mammoth from utha club
+
 }
