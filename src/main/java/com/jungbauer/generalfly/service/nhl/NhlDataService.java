@@ -7,7 +7,7 @@ import com.jungbauer.generalfly.repository.nhl.GameRepository;
 import com.jungbauer.generalfly.repository.nhl.TeamRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDate;import java.util.List;
 
 @Service
 public class NhlDataService {
@@ -23,13 +23,39 @@ public class NhlDataService {
         this.gameRepository = gameRepository;
     }
 
-    public void collectGameData(String date) {
-        ScheduleDate data = nhlApiService.getScheduleByDate(date);
-        for (ScheduleDate.GameDay day : data.getGameWeek()) {
+    // todo throwing an exception here is bad, should handle it here
+    // todo this works for current season but might break for older seasons, coz nextDate might continue into new season
+    public int collectInitialData() throws InterruptedException {
+        System.out.println("======= collect initial data =======");
+        String nextStartDate = "2025-09-20"; // preseason start for 2025-2026 season
+        int totalGames = 0;
+        int loop = 0;
+
+        do {
+            ScheduleDate scheduleData = nhlApiService.getScheduleByDate(nextStartDate);
+            System.out.println("-----" + loop + ": between " + nextStartDate + " and " + scheduleData.getNextStartDate() + " : " + scheduleData.getNumberOfGames() + " games");
+            nextStartDate = scheduleData.getNextStartDate(); // update loop variable
+
+            // save game data
+            saveFromGamesWeek(scheduleData.getGameWeek());
+            // pause for the api
+            Thread.sleep(2000);
+
+            totalGames += scheduleData.getNumberOfGames();
+            loop++;
+        } while (nextStartDate != null);
+
+        System.out.println("======= added " + totalGames + " games =======");
+
+        return totalGames;
+    }
+
+    private void saveFromGamesWeek(List<ScheduleDate.GameDay> gameWeekData) {
+        for (ScheduleDate.GameDay day : gameWeekData) {
             // expecting an ISO yyyy-MM-dd string
             LocalDate gameDate = LocalDate.parse(day.getDate());
             for (ScheduleDate.Game game : day.getGames()) {
-                // try find the game
+                // try to find the game
                 Game dbGame = gameRepository.findByNhlGameId(game.getId());
                 if (dbGame == null) {
                     // save new game
