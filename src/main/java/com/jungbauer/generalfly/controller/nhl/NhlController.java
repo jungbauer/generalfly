@@ -5,7 +5,6 @@ import com.jungbauer.generalfly.dto.nhl.api.GameCenterPlayByPlay;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import com.jungbauer.generalfly.service.DumpLogService;
 import com.jungbauer.generalfly.service.nhl.NhlApiService;
-import com.jungbauer.generalfly.service.nhl.NhlDataService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
