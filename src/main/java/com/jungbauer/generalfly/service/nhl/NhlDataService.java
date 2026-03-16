@@ -9,6 +9,7 @@ import com.jungbauer.generalfly.repository.nhl.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -21,6 +22,8 @@ public class NhlDataService {
     private final DivisionRepository divisionRepository;
     private final SeasonRepository seasonRepository;
 
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     public NhlDataService(NhlApiService nhlApiService, TeamRepository teamRepository,
                           GameRepository gameRepository, ConferenceRepository conferenceRepository,
                           DivisionRepository divisionRepository, SeasonRepository seasonRepository) {
@@ -30,33 +33,6 @@ public class NhlDataService {
         this.conferenceRepository = conferenceRepository;
         this.divisionRepository = divisionRepository;
         this.seasonRepository = seasonRepository;
-    }
-
-    // todo throwing an exception here is bad, should handle it here
-    // todo this works for current season but might break for older seasons, coz nextDate might continue into new season
-    public int collectInitialData() throws InterruptedException {
-        System.out.println("======= collect initial data =======");
-        String nextStartDate = "2025-09-20"; // preseason start for 2025-2026 season
-        int totalGames = 0;
-        int loop = 0;
-
-        do {
-            ScheduleDate scheduleData = nhlApiService.getScheduleByDate(nextStartDate);
-            System.out.println("-----" + loop + ": between " + nextStartDate + " and " + scheduleData.getNextStartDate() + " : " + scheduleData.getNumberOfGames() + " games");
-            nextStartDate = scheduleData.getNextStartDate(); // update loop variable
-
-            // save game data
-            saveFromGamesWeek(scheduleData.getGameWeek());
-            // pause for the api
-            Thread.sleep(2000);
-
-            totalGames += scheduleData.getNumberOfGames();
-            loop++;
-        } while (nextStartDate != null);
-
-        System.out.println("======= added " + totalGames + " games =======");
-
-        return totalGames;
     }
 
     private void saveFromGamesWeek(List<ScheduleDate.GameDay> gameWeekData) {
@@ -183,9 +159,45 @@ public class NhlDataService {
         return dbSeason;
     }
 
+    // todo this works for current season but might break for older seasons, coz nextDate might continue into new season
     public String collectSeasonData(Integer seasonId) {
+        System.out.println("Collecting data for season: " + seasonId);
         Season season = seasonRepository.findById(seasonId)
                 .orElseThrow(() -> new IllegalArgumentException("Season not found: " + seasonId));
-        return "Collecting data for season: " + season.getFormattedSeasonId();
+
+        String nextStartDate = season.getStartDate().format(dateFormatter);
+
+        if (season.getPreseasonStartDate() != null) {
+            if (season.getPreseasonStartDate().isBefore(season.getStartDate())) {
+                nextStartDate = season.getPreseasonStartDate().format(dateFormatter);
+            }
+        }
+
+        int totalGames = 0;
+        int loop = 0;
+
+        try {
+            do {
+                ScheduleDate scheduleData = nhlApiService.getScheduleByDate(nextStartDate);
+                System.out.println("-----" + loop + ": between " + nextStartDate + " and " + scheduleData.getNextStartDate() + " : " + scheduleData.getNumberOfGames() + " games");
+                nextStartDate = scheduleData.getNextStartDate(); // update loop variable
+
+                // save game data
+                saveFromGamesWeek(scheduleData.getGameWeek());
+                // pause for the api
+                Thread.sleep(2000);
+
+                totalGames += scheduleData.getNumberOfGames();
+                loop++;
+            } while (nextStartDate != null);
+        }
+        catch (InterruptedException interruptedException) {
+            System.out.println("ERROR interruptedException: " + totalGames + " games before interrupt.");
+        }
+
+
+        System.out.println("======= added " + totalGames + " games =======");
+
+        return "Collected data for season: " + season.getFormattedSeasonId() + ", saved games: " + totalGames;
     }
 }
