@@ -4,6 +4,7 @@ import com.jungbauer.generalfly.domain.nhl.Season;
 import com.jungbauer.generalfly.repository.nhl.SeasonRepository;
 import com.jungbauer.generalfly.service.nhl.NhlDataService;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,5 +38,15 @@ public class AdminController {
         String message = nhlDataService.collectSeasonData(seasonId);
         redirectAttributes.addFlashAttribute("successMessage", message);
         return "redirect:/admin/nhl-data";
+    }
+
+    @GetMapping("/admin/popseasons")
+    public ResponseEntity<String> populateNhlSeasons() {
+        return ResponseEntity.ok().body(nhlDataService.populateNhlSeasons());
+    }
+
+    @GetMapping("/admin/popdivconf")
+    public ResponseEntity<String> populateDivisionAndConference() {
+        return ResponseEntity.ok().body(nhlDataService.populateDivisionAndConference());
     }
 }

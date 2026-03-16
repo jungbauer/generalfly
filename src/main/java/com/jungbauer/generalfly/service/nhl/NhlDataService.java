@@ -93,7 +93,7 @@ public class NhlDataService {
      * This populates team db entries with their conference and division.
      * We assume teams already have db entries.
      */
-    public void populateDivisionAndConference() {
+    public String  populateDivisionAndConference() {
         Standings standings = nhlApiService.getStandingsNow();
         for (StandingsTeam apiTeam : standings.getStandings()) {
             String conferenceName = apiTeam.getConferenceName();
@@ -121,6 +121,7 @@ public class NhlDataService {
                 teamRepository.save(dbTeam);
             }
         }
+        return "Populated divisions and conferences";
     }
 
     public String populateNhlSeasons() {
