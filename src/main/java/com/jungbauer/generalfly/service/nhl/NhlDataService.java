@@ -1,16 +1,11 @@
 package com.jungbauer.generalfly.service.nhl;
 
-import com.jungbauer.generalfly.domain.nhl.Conference;
-import com.jungbauer.generalfly.domain.nhl.Division;
-import com.jungbauer.generalfly.domain.nhl.Game;
-import com.jungbauer.generalfly.domain.nhl.Team;
+import com.jungbauer.generalfly.domain.nhl.*;
 import com.jungbauer.generalfly.dto.nhl.api.ScheduleDate;
+import com.jungbauer.generalfly.dto.nhl.api.Seasons;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import com.jungbauer.generalfly.dto.nhl.api.StandingsTeam;
-import com.jungbauer.generalfly.repository.nhl.ConferenceRepository;
-import com.jungbauer.generalfly.repository.nhl.DivisionRepository;
-import com.jungbauer.generalfly.repository.nhl.GameRepository;
-import com.jungbauer.generalfly.repository.nhl.TeamRepository;
+import com.jungbauer.generalfly.repository.nhl.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,15 +19,17 @@ public class NhlDataService {
     private final GameRepository gameRepository;
     private final ConferenceRepository conferenceRepository;
     private final DivisionRepository divisionRepository;
+    private final SeasonRepository seasonRepository;
 
     public NhlDataService(NhlApiService nhlApiService, TeamRepository teamRepository,
                           GameRepository gameRepository, ConferenceRepository conferenceRepository,
-                          DivisionRepository divisionRepository) {
+                          DivisionRepository divisionRepository, SeasonRepository seasonRepository) {
         this.nhlApiService = nhlApiService;
         this.teamRepository = teamRepository;
         this.gameRepository = gameRepository;
         this.conferenceRepository = conferenceRepository;
         this.divisionRepository = divisionRepository;
+        this.seasonRepository = seasonRepository;
     }
 
     // todo throwing an exception here is bad, should handle it here
@@ -148,5 +145,41 @@ public class NhlDataService {
                 teamRepository.save(dbTeam);
             }
         }
+    }
+
+    public String populateNhlSeasons() {
+        int savedTotal = 0;
+        Seasons detailedSeasons = nhlApiService.getDetailedSeasons();
+        for (Seasons.SeasonDetails detailedSeason : detailedSeasons.getData()) {
+            Season dbSeason = seasonRepository.findByNhlId(detailedSeason.getId());
+            if (dbSeason == null) {
+                dbSeason = seasonRepository.save(convertApiToDb(detailedSeason));
+                savedTotal++;
+            }
+        }
+
+        return "Total seasons saved: " + savedTotal;
+    }
+
+    private Season convertApiToDb(Seasons.SeasonDetails apiSeason) {
+        Season dbSeason = new Season();
+        dbSeason.setNhlId(apiSeason.getId());
+        dbSeason.setFormattedSeasonId(apiSeason.getFormattedSeasonId());
+        dbSeason.setSeasonOrdinal(apiSeason.getSeasonOrdinal());
+
+        if (apiSeason.getStartDate() != null) {
+            dbSeason.setStartDate(apiSeason.getStartDate().toLocalDate());
+        }
+        if (apiSeason.getEndDate() != null) {
+            dbSeason.setEndDate(apiSeason.getEndDate().toLocalDate());
+        }
+        if (apiSeason.getPreseasonStartdate() != null) {
+            dbSeason.setPreseasonStartDate(apiSeason.getPreseasonStartdate().toLocalDate());
+        }
+        if (apiSeason.getRegularSeasonEndDate() != null) {
+            dbSeason.setRegularSeasonEndDate(apiSeason.getRegularSeasonEndDate().toLocalDate());
+        }
+
+        return dbSeason;
     }
 }
