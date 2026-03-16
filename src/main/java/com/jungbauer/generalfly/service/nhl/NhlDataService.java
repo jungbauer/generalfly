@@ -182,4 +182,10 @@ public class NhlDataService {
 
         return dbSeason;
     }
+
+    public String collectSeasonData(Integer seasonId) {
+        Season season = seasonRepository.findById(seasonId)
+                .orElseThrow(() -> new IllegalArgumentException("Season not found: " + seasonId));
+        return "Collecting data for season: " + season.getFormattedSeasonId();
+    }
 }
