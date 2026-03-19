@@ -5,6 +5,8 @@ import com.jungbauer.generalfly.dto.nhl.api.ScheduleDate;
 import com.jungbauer.generalfly.dto.nhl.api.Seasons;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import com.jungbauer.generalfly.dto.nhl.api.StandingsTeam;
+import com.jungbauer.generalfly.dto.nhl.uiapp.GameView;
+import com.jungbauer.generalfly.dto.nhl.uiapp.GamesAroundToday;
 import com.jungbauer.generalfly.repository.nhl.*;
 import org.springframework.stereotype.Service;
 
@@ -200,5 +202,27 @@ public class NhlDataService {
         System.out.println("======= added " + totalGames + " games =======");
 
         return "Collected data for season: " + season.getFormattedSeasonId() + ", saved games: " + totalGames;
+    }
+
+    public GamesAroundToday getGamesAroundToday() {
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+        LocalDate tomorrow = today.plusDays(1);
+
+        List<Game> games = gameRepository.findByGameDateBetween(yesterday, tomorrow);
+
+        GamesAroundToday result = new GamesAroundToday();
+        for (Game game : games) {
+            GameView gameView = new GameView(game);
+            if (yesterday.equals(game.getGameDate())) {
+                result.addYesterday(gameView);
+            } else if (today.equals(game.getGameDate())) {
+                result.addToday(gameView);
+            } else if (tomorrow.equals(game.getGameDate())) {
+                result.addTomorrow(gameView);
+            }
+        }
+
+        return result;
     }
 }

@@ -3,8 +3,10 @@ package com.jungbauer.generalfly.controller.nhl;
 import com.jungbauer.generalfly.dto.nhl.api.ClubSeasonSchedule;
 import com.jungbauer.generalfly.dto.nhl.api.GameCenterPlayByPlay;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
+import com.jungbauer.generalfly.dto.nhl.uiapp.GamesAroundToday;
 import com.jungbauer.generalfly.service.DumpLogService;
 import com.jungbauer.generalfly.service.nhl.NhlApiService;
+import com.jungbauer.generalfly.service.nhl.NhlDataService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,12 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/nhl")
 public class NhlController {
     private final NhlApiService nhlApiService;
+    private final NhlDataService nhlDataService;
     private final DumpLogService dumpLogService;
 
-    public NhlController(NhlApiService nhlApiService, DumpLogService dumpLogService) {
+    public NhlController(NhlApiService nhlApiService, NhlDataService nhlDataService, DumpLogService dumpLogService) {
         this.nhlApiService = nhlApiService;
+        this.nhlDataService = nhlDataService;
         this.dumpLogService = dumpLogService;
     }
 
@@ -50,6 +54,14 @@ public class NhlController {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(12, TimeUnit.HOURS))
                 .body(nhlApiService.getGameCenterPlayByPlay(gameId));
+    }
+
+    @GetMapping("/games/around-today")
+    public ResponseEntity<GamesAroundToday> getGamesAroundToday(HttpServletRequest request) {
+        dumpLogService.logMessage("NhlController", "getGamesAroundToday", "Games around today called. ip: " + getIpAddress(request));
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(12, TimeUnit.HOURS))
+                .body(nhlDataService.getGamesAroundToday());
     }
 
     private String getIpAddress(HttpServletRequest request) {
