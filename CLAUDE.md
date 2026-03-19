@@ -72,6 +72,13 @@ Generalfly is a Spring Boot web application deployed to Fly.io. It has two main 
 - Content pages use `layout:fragment="content"` and `layout:decorate="~{layout}"`
 - `sec:authorize` attributes control UI based on roles
 
+## Coding Standards
+
+### Lombok
+- Use Lombok annotations (`@Getter`, `@Setter`, `@NoArgsConstructor`, `@AllArgsConstructor`) for DTOs and entities to minimize boilerplate
+- Follow existing patterns in the codebase (see `dto.nhl.api` package for examples)
+- Custom constructors can still be added when mapping from entities is needed
+
 ## Testing
 
 - Uses JUnit 5 with Spring Boot Test
