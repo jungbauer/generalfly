@@ -2,6 +2,7 @@ package com.jungbauer.generalfly.controller;
 
 import com.jungbauer.generalfly.domain.nhl.Season;
 import com.jungbauer.generalfly.repository.nhl.SeasonRepository;
+import com.jungbauer.generalfly.service.nhl.GameUpdateService;
 import com.jungbauer.generalfly.service.nhl.NhlDataService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -12,17 +13,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
 public class AdminController {
 
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     private final SeasonRepository seasonRepository;
     private final NhlDataService nhlDataService;
+    private final GameUpdateService gameUpdateService;
 
-    public AdminController(SeasonRepository seasonRepository, NhlDataService nhlDataService) {
+    public AdminController(SeasonRepository seasonRepository, NhlDataService nhlDataService, GameUpdateService gameUpdateService) {
         this.seasonRepository = seasonRepository;
         this.nhlDataService = nhlDataService;
+        this.gameUpdateService = gameUpdateService;
     }
 
     @GetMapping("/admin/nhl-data")
@@ -36,6 +43,25 @@ public class AdminController {
     public String collectSeasonData(@RequestParam("seasonId") Integer seasonId,
                                     RedirectAttributes redirectAttributes) {
         String message = nhlDataService.collectSeasonData(seasonId);
+        redirectAttributes.addFlashAttribute("successMessage", message);
+        return "redirect:/admin/nhl-data";
+    }
+
+    @PostMapping("/admin/nhl-data/update-games")
+    public String updateGamesForDate(@RequestParam("date") LocalDate date,
+                                     RedirectAttributes redirectAttributes) {
+        GameUpdateService.UpdateResult result = gameUpdateService.updateGamesForDate(date);
+
+        String message;
+        if (result.isSuccess()) {
+            message = String.format("Successfully updated games for %s: checked %d games, updated %d games between %s and %s",
+                    date, result.getGamesChecked(), result.getGamesUpdated(),
+                    result.getOldestDate().format(dateFormatter), result.getMostRecentDate().format(dateFormatter));
+        } else {
+            message = String.format("Failed to update games for %s: %s",
+                    date, result.getErrorMessage());
+        }
+
         redirectAttributes.addFlashAttribute("successMessage", message);
         return "redirect:/admin/nhl-data";
     }

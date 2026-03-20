@@ -39,6 +39,20 @@
                 </div>
             </div>
         </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Update Games for Date</h5>
+
+                <form th:action="@{/admin/nhl-data/update-games}" method="post">
+                    <div class="mb-3">
+                        <label for="datePicker" class="form-label">Select Date</label>
+                        <input type="date" class="form-control" id="datePicker" name="date" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Games</button>
+                </form>
+            </div>
+        </div>
     </div>
 </section>
 </body>
