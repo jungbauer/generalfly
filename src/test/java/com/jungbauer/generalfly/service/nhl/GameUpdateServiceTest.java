@@ -59,14 +59,28 @@ class GameUpdateServiceTest {
     void updateRecentGames_updatesGameWhenDataDiffers() {
         LocalDate today = LocalDate.now();
         String todayStr = today.format(dateFormatter);
+        String minus1Str = today.minusDays(1).format(dateFormatter);
+        String minus2Str = today.minusDays(2).format(dateFormatter);
 
-        ScheduleDate.Game apiGame = createApiGame(1L, "OFF", "REG", 3, 2);
-        ScheduleDate scheduleDate = createScheduleWithGame(apiGame);
+        ScheduleDate.Game apiGame1 = createApiGame(1L, "OFF", "REG", 3, 2);
+        ScheduleDate.Game apiGame2 = createApiGame(2L, "OFF", "OT", 4, 5);
+        ScheduleDate.Game apiGame3 = createApiGame(3L, "FUT", null, null, null);
+        ScheduleDate scheduleDate1 = createScheduleWithGame(todayStr, apiGame1);
+        ScheduleDate scheduleDate2 = createScheduleWithGame(minus1Str, apiGame2);
+        ScheduleDate scheduleDate3 = createScheduleWithGame(minus2Str, apiGame3);
 
         Game dbGame = createDbGame(1L, "LIVE", null, null, null);
+        Game dbGame2 = createDbGame(2L, "FUT", null, null, null);
+        Game dbGame3 = createDbGame(3L, "FUT", null, null, null);
 
-        when(nhlApiService.getScheduleByDate(todayStr)).thenReturn(scheduleDate);
+        when(nhlApiService.getScheduleByDate(todayStr)).thenReturn(scheduleDate1);
+        when(nhlApiService.getScheduleByDate(minus1Str)).thenReturn(scheduleDate2);
+        when(nhlApiService.getScheduleByDate(minus2Str)).thenReturn(scheduleDate3);
+
         when(gameRepository.findByNhlGameId(1L)).thenReturn(dbGame);
+        when(gameRepository.findByNhlGameId(2L)).thenReturn(dbGame2);
+        when(gameRepository.findByNhlGameId(3L)).thenReturn(dbGame3);
+
         when(gameRepository.save(any(Game.class))).thenReturn(dbGame);
 
         gameUpdateService.updateRecentGames();
@@ -135,6 +149,16 @@ class GameUpdateServiceTest {
     private ScheduleDate createScheduleWithGame(ScheduleDate.Game apiGame) {
         ScheduleDate.GameDay gameDay = new ScheduleDate.GameDay();
         gameDay.setDate(LocalDate.now().toString());
+        gameDay.setGames(List.of(apiGame));
+
+        ScheduleDate scheduleDate = new ScheduleDate();
+        scheduleDate.setGameWeek(List.of(gameDay));
+        return scheduleDate;
+    }
+
+    private ScheduleDate createScheduleWithGame(String dateStr, ScheduleDate.Game apiGame) {
+        ScheduleDate.GameDay gameDay = new ScheduleDate.GameDay();
+        gameDay.setDate(dateStr);
         gameDay.setGames(List.of(apiGame));
 
         ScheduleDate scheduleDate = new ScheduleDate();
