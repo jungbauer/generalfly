@@ -72,7 +72,7 @@ public class WebSecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
-        String[] approvalsPaths = { "/actuator/**", "/user/**" };
+        String[] approvalsPaths = { "/actuator/**", "/user/**", "/logs/**", "/admin/**" };
         http
             .securityMatcher(approvalsPaths)
             .authorizeHttpRequests(authorize -> authorize
