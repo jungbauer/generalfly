@@ -3,6 +3,7 @@ package com.jungbauer.generalfly.service.nhl;
 import com.jungbauer.generalfly.domain.nhl.Game;
 import com.jungbauer.generalfly.dto.nhl.api.ScheduleDate;
 import com.jungbauer.generalfly.repository.nhl.GameRepository;
+import com.jungbauer.generalfly.service.DumpLogService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,12 +19,14 @@ public class GameUpdateService {
 
     private final NhlApiService nhlApiService;
     private final GameRepository gameRepository;
+    private final DumpLogService dumpLogService;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public GameUpdateService(NhlApiService nhlApiService, GameRepository gameRepository) {
+    public GameUpdateService(NhlApiService nhlApiService, GameRepository gameRepository, DumpLogService dumpLogService) {
         this.nhlApiService = nhlApiService;
         this.gameRepository = gameRepository;
+        this.dumpLogService = dumpLogService;
     }
 
     @Getter
@@ -135,7 +138,9 @@ public class GameUpdateService {
         Game dbGame = gameRepository.findByNhlGameId(apiGame.getId());
 
         if (dbGame == null) {
-            log.debug("Game {} not found in database, skipping update", apiGame.getId());
+            String msg = "Game " + apiGame.getId() + " not found in database, skipping update";
+            log.debug(msg);
+            dumpLogService.logMessage("GameUpdateService", "updateGameIfChanged", msg);
             return false;
         }
 

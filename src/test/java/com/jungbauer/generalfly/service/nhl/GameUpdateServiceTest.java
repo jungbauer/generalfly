@@ -3,6 +3,7 @@ package com.jungbauer.generalfly.service.nhl;
 import com.jungbauer.generalfly.domain.nhl.Game;
 import com.jungbauer.generalfly.dto.nhl.api.ScheduleDate;
 import com.jungbauer.generalfly.repository.nhl.GameRepository;
+import com.jungbauer.generalfly.service.DumpLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,13 +27,16 @@ class GameUpdateServiceTest {
     @Mock
     private GameRepository gameRepository;
 
+    @Mock
+    private DumpLogService dumpLogService;
+
     private GameUpdateService gameUpdateService;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @BeforeEach
     void setUp() {
-        gameUpdateService = new GameUpdateService(nhlApiService, gameRepository);
+        gameUpdateService = new GameUpdateService(nhlApiService, gameRepository, dumpLogService);
     }
 
     @Test
