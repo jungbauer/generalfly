@@ -110,7 +110,7 @@ public class GameUpdateService {
         }
     }
 
-    @Scheduled(cron = "0 0 4 * * ?")
+    @Scheduled(cron = "0 0 5 * * ?")
     public void updateRecentGames() {
         log.info("Starting scheduled game update process");
 
