@@ -7,11 +7,14 @@ import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import com.jungbauer.generalfly.dto.nhl.api.StandingsTeam;
 import com.jungbauer.generalfly.dto.nhl.uiapp.GameView;
 import com.jungbauer.generalfly.dto.nhl.uiapp.GamesAroundToday;
+import com.jungbauer.generalfly.dto.nhl.uiapp.SeasonView;
 import com.jungbauer.generalfly.repository.nhl.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -231,5 +234,16 @@ public class NhlDataService {
         }
 
         return result;
+    }
+
+    public List<SeasonView> getDbSeasons() {
+        List<Season> dbSeasons = seasonRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate"));
+        List<SeasonView> apiSeasons = new ArrayList<>();
+        for (Season dbSeason : dbSeasons) {
+            SeasonView apiSeason = new SeasonView(dbSeason);
+            apiSeasons.add(apiSeason);
+        }
+
+        return apiSeasons;
     }
 }

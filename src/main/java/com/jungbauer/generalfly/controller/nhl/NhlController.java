@@ -4,6 +4,7 @@ import com.jungbauer.generalfly.dto.nhl.api.ClubSeasonSchedule;
 import com.jungbauer.generalfly.dto.nhl.api.GameCenterPlayByPlay;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import com.jungbauer.generalfly.dto.nhl.uiapp.GamesAroundToday;
+import com.jungbauer.generalfly.dto.nhl.uiapp.SeasonView;
 import com.jungbauer.generalfly.service.DumpLogService;
 import com.jungbauer.generalfly.service.nhl.NhlApiService;
 import com.jungbauer.generalfly.service.nhl.NhlDataService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -67,6 +69,12 @@ public class NhlController {
     public ResponseEntity<GamesAroundToday> getGamesAroundToday(HttpServletRequest request) {
         logEndpointAccess("getGamesAroundToday", null, request);
         return withCacheHeaders().body(nhlDataService.getGamesAroundToday());
+    }
+
+    @GetMapping("/seasons")
+    public ResponseEntity<List<SeasonView>> getSeasons(HttpServletRequest request) {
+        logEndpointAccess("getSeasons", null, request);
+        return withCacheHeaders().body(nhlDataService.getDbSeasons());
     }
 
     @ExceptionHandler(Exception.class)
