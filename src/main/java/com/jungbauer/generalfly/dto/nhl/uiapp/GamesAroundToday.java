@@ -12,6 +12,9 @@ public class GamesAroundToday {
     private List<GameView> yesterday = new ArrayList<>();
     private List<GameView> today = new ArrayList<>();
     private List<GameView> tomorrow = new ArrayList<>();
+    private String yesterdayDate;
+    private String todayDate;
+    private String tomorrowDate;
 
     public void addYesterday(GameView game) {
         this.yesterday.add(game);

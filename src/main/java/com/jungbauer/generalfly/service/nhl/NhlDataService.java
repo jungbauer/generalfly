@@ -212,6 +212,10 @@ public class NhlDataService {
         List<Game> games = gameRepository.findByGameDateBetween(yesterday, tomorrow);
 
         GamesAroundToday result = new GamesAroundToday();
+        result.setYesterdayDate(yesterday.format(dateFormatter));
+        result.setTodayDate(today.format(dateFormatter));
+        result.setTomorrowDate(tomorrow.format(dateFormatter));
+
         for (Game game : games) {
             GameView gameView = new GameView(game);
             if (yesterday.equals(game.getGameDate())) {
