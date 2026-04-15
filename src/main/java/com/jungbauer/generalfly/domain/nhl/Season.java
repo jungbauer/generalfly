@@ -37,4 +37,7 @@ public class Season {
     private LocalDate endDate;
     private LocalDate preseasonStartDate;
     private LocalDate regularSeasonEndDate;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean collected;
 }

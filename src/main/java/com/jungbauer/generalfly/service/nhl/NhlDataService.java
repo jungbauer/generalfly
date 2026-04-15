@@ -193,6 +193,9 @@ public class NhlDataService {
                 totalGames += scheduleData.getNumberOfGames();
                 loop++;
             } while (nextStartDate != null);
+
+            season.setCollected(true);
+            seasonRepository.save(season);
         }
         catch (InterruptedException interruptedException) {
             System.out.println("ERROR interruptedException: " + totalGames + " games before interrupt.");
