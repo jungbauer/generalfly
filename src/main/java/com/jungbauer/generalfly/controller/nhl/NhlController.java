@@ -4,6 +4,7 @@ import com.jungbauer.generalfly.dto.nhl.api.ClubSeasonSchedule;
 import com.jungbauer.generalfly.dto.nhl.api.GameCenterPlayByPlay;
 import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import com.jungbauer.generalfly.dto.nhl.uiapp.GamesAroundToday;
+import com.jungbauer.generalfly.dto.nhl.uiapp.SeasonGames;
 import com.jungbauer.generalfly.dto.nhl.uiapp.SeasonView;
 import com.jungbauer.generalfly.service.DumpLogService;
 import com.jungbauer.generalfly.service.nhl.NhlApiService;
@@ -75,6 +76,14 @@ public class NhlController {
     public ResponseEntity<List<SeasonView>> getSeasons(HttpServletRequest request) {
         logEndpointAccess("getSeasons", null, request);
         return withCacheHeaders().body(nhlDataService.getDbSeasons());
+    }
+
+    @GetMapping("/games/season")
+    public ResponseEntity<SeasonGames> seasonGames(
+            HttpServletRequest request,
+            @RequestParam(name = "season") @Pattern(regexp = "\\d{8}", message = "Season must be 8 digits (e.g., 20252026)") String season) {
+        logEndpointAccess("seasonGames", "season : " + season, request);
+        return withCacheHeaders().body(nhlDataService.getSeasonGames(season));
     }
 
     @ExceptionHandler(Exception.class)

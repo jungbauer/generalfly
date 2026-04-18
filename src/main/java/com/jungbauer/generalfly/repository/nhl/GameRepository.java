@@ -10,4 +10,6 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
     Game findByNhlGameId(Long nhlGameId);
 
     List<Game> findByGameDateBetween(LocalDate startDate, LocalDate endDate);
+    List<Game> findGamesBySeason(Long season);
+
 }

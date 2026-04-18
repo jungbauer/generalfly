@@ -7,6 +7,7 @@ import com.jungbauer.generalfly.dto.nhl.api.Standings;
 import com.jungbauer.generalfly.dto.nhl.api.StandingsTeam;
 import com.jungbauer.generalfly.dto.nhl.uiapp.GameView;
 import com.jungbauer.generalfly.dto.nhl.uiapp.GamesAroundToday;
+import com.jungbauer.generalfly.dto.nhl.uiapp.SeasonGames;
 import com.jungbauer.generalfly.dto.nhl.uiapp.SeasonView;
 import com.jungbauer.generalfly.repository.nhl.*;
 import org.springframework.data.domain.Sort;
@@ -245,5 +246,24 @@ public class NhlDataService {
         }
 
         return apiSeasons;
+    }
+
+    public SeasonGames getSeasonGames(String seasonStr) {
+        Season dbSeason = seasonRepository.findByNhlId(Integer.valueOf(seasonStr));
+        //todo need to throw an error here if the season is unrecognised or uncollected
+
+        List<Game> dbGames = gameRepository.findGamesBySeason(dbSeason.getNhlId().longValue());
+
+        SeasonGames seasonGames = new SeasonGames();
+        seasonGames.setSeason(new SeasonView(dbSeason));
+
+        List<GameView> apiGames = new ArrayList<>();
+        for (Game dbGame : dbGames) {
+            apiGames.add(new GameView(dbGame));
+        }
+
+        seasonGames.setGames(apiGames);
+
+        return seasonGames;
     }
 }
