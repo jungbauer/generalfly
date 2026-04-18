@@ -307,6 +307,10 @@ public class NhlDataService {
         return foundSeason;
     }
 
+    /**
+     * Gets the season matching LocalDate.now() from the database.
+     * @return String season code, e.g. 20252026
+     */
     private String getCurrentSeason() {
         List<Season> seasons = seasonRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate"));
         LocalDate currentDate = LocalDate.now();
