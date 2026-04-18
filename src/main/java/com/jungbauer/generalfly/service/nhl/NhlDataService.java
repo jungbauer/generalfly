@@ -267,7 +267,7 @@ public class NhlDataService {
         return seasonGames;
     }
 
-    String getCurrentSeasonStr(LocalDate currentDate, List<Season> seasons) {
+    String getSeasonForDate(LocalDate currentDate, List<Season> seasons) {
         int i = 0;
         String currentSeason = "20252026";
 
@@ -300,9 +300,9 @@ public class NhlDataService {
         return currentSeason;
     }
 
-    private String getCurrentSeasonStr() {
+    private String getCurrentSeason() {
         List<Season> seasons = seasonRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate"));
         LocalDate currentDate = LocalDate.now();
-        return getCurrentSeasonStr(currentDate, seasons);
+        return getSeasonForDate(currentDate, seasons);
     }
 }

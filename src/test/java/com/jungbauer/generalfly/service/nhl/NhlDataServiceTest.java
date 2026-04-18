@@ -60,7 +60,7 @@ class NhlDataServiceTest {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate duringSeason = LocalDate.of(2025, 1, 15);
 
-        String result = nhlDataService.getCurrentSeasonStr(duringSeason, seasons);
+        String result = nhlDataService.getSeasonForDate(duringSeason, seasons);
 
         assertEquals("20242025", result);
     }
@@ -70,7 +70,7 @@ class NhlDataServiceTest {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate beforePreseason = LocalDate.of(2024, 9, 1);
 
-        String result = nhlDataService.getCurrentSeasonStr(beforePreseason, seasons);
+        String result = nhlDataService.getSeasonForDate(beforePreseason, seasons);
 
         assertEquals("20232024", result);
     }
@@ -80,7 +80,7 @@ class NhlDataServiceTest {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2024, 9, 21);
 
-        String result = nhlDataService.getCurrentSeasonStr(preseasonStart, seasons);
+        String result = nhlDataService.getSeasonForDate(preseasonStart, seasons);
 
         assertEquals("20242025", result);
     }
@@ -90,7 +90,7 @@ class NhlDataServiceTest {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2022, 10, 21);
 
-        String result = nhlDataService.getCurrentSeasonStr(preseasonStart, seasons);
+        String result = nhlDataService.getSeasonForDate(preseasonStart, seasons);
 
         assertEquals("20222023", result);
     }
@@ -100,7 +100,7 @@ class NhlDataServiceTest {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2019, 10, 21);
 
-        String result = nhlDataService.getCurrentSeasonStr(preseasonStart, seasons);
+        String result = nhlDataService.getSeasonForDate(preseasonStart, seasons);
 
         assertEquals("20212022", result);
     }
@@ -110,7 +110,7 @@ class NhlDataServiceTest {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2022, 9, 21);
 
-        String result = nhlDataService.getCurrentSeasonStr(preseasonStart, seasons);
+        String result = nhlDataService.getSeasonForDate(preseasonStart, seasons);
 
         assertEquals("20212022", result);
     }
@@ -121,7 +121,7 @@ class NhlDataServiceTest {
         List<Season> seasons = loadSeasonsFromJson();
         when(seasonRepository.findAll(any(Sort.class))).thenReturn(seasons);
 
-        Method method = NhlDataService.class.getDeclaredMethod("getCurrentSeasonStr");
+        Method method = NhlDataService.class.getDeclaredMethod("getCurrentSeason");
         method.setAccessible(true);
         String result = (String) method.invoke(nhlDataService);
 
