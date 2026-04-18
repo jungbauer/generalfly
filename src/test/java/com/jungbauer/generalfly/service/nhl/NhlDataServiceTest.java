@@ -56,79 +56,61 @@ class NhlDataServiceTest {
     }
 
     @Test
-    void getCurrentSeasonStr_withDateDuringSeason_returnsCurrentSeason() throws IOException, NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+    void getCurrentSeasonStr_withDateDuringSeason_returnsCurrentSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate duringSeason = LocalDate.of(2025, 1, 15);
 
-        Method method = NhlDataService.class.getDeclaredMethod("getCurrentSeasonStr", LocalDate.class, List.class);
-        method.setAccessible(true);
-        String result = (String) method.invoke(nhlDataService, duringSeason, seasons);
+        String result = nhlDataService.getCurrentSeasonStr(duringSeason, seasons);
 
         assertEquals("20242025", result);
     }
 
     @Test
-    void getCurrentSeasonStr_withDateBeforePreseason_returnsOlderSeason() throws IOException, NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+    void getCurrentSeasonStr_withDateBeforePreseason_returnsOlderSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate beforePreseason = LocalDate.of(2024, 9, 1);
 
-        Method method = NhlDataService.class.getDeclaredMethod("getCurrentSeasonStr", LocalDate.class, List.class);
-        method.setAccessible(true);
-        String result = (String) method.invoke(nhlDataService, beforePreseason, seasons);
+        String result = nhlDataService.getCurrentSeasonStr(beforePreseason, seasons);
 
         assertEquals("20232024", result);
     }
 
     @Test
-    void getCurrentSeasonStr_withDateOnPreseasonStart_returnsCorrectSeason() throws IOException, NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+    void getCurrentSeasonStr_withDateOnPreseasonStart_returnsCorrectSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2024, 9, 21);
 
-        Method method = NhlDataService.class.getDeclaredMethod("getCurrentSeasonStr", LocalDate.class, List.class);
-        method.setAccessible(true);
-        String result = (String) method.invoke(nhlDataService, preseasonStart, seasons);
+        String result = nhlDataService.getCurrentSeasonStr(preseasonStart, seasons);
 
         assertEquals("20242025", result);
     }
 
     @Test
-    void getCurrentSeasonStr_seasonWithNoPreseason_returnsCorrectSeason() throws IOException, NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+    void getCurrentSeasonStr_seasonWithNoPreseason_returnsCorrectSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2022, 10, 21);
 
-        Method method = NhlDataService.class.getDeclaredMethod("getCurrentSeasonStr", LocalDate.class, List.class);
-        method.setAccessible(true);
-        String result = (String) method.invoke(nhlDataService, preseasonStart, seasons);
+        String result = nhlDataService.getCurrentSeasonStr(preseasonStart, seasons);
 
         assertEquals("20222023", result);
     }
 
     @Test
-    void getCurrentSeasonStr_withDateOutsideOldestSeason() throws IOException, NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+    void getCurrentSeasonStr_withDateOutsideOldestSeason_returnsCorrectSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2019, 10, 21);
 
-        Method method = NhlDataService.class.getDeclaredMethod("getCurrentSeasonStr", LocalDate.class, List.class);
-        method.setAccessible(true);
-        String result = (String) method.invoke(nhlDataService, preseasonStart, seasons);
+        String result = nhlDataService.getCurrentSeasonStr(preseasonStart, seasons);
 
         assertEquals("20212022", result);
     }
 
     @Test
-    void getCurrentSeasonStr_testLoop() throws IOException, NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+    void getCurrentSeasonStr_testLoop() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2022, 9, 21);
 
-        Method method = NhlDataService.class.getDeclaredMethod("getCurrentSeasonStr", LocalDate.class, List.class);
-        method.setAccessible(true);
-        String result = (String) method.invoke(nhlDataService, preseasonStart, seasons);
+        String result = nhlDataService.getCurrentSeasonStr(preseasonStart, seasons);
 
         assertEquals("20212022", result);
     }

@@ -267,7 +267,7 @@ public class NhlDataService {
         return seasonGames;
     }
 
-    private String getCurrentSeasonStr(LocalDate currentDate, List<Season> seasons) {
+    String getCurrentSeasonStr(LocalDate currentDate, List<Season> seasons) {
         int i = 0;
         String currentSeason = "20252026";
 
