@@ -56,7 +56,7 @@ class NhlDataServiceTest {
     }
 
     @Test
-    void getCurrentSeasonStr_withDateDuringSeason_returnsCurrentSeason() throws IOException {
+    void getSeasonForDate_withDateDuringSeason_returnsCurrentSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate duringSeason = LocalDate.of(2025, 1, 15);
 
@@ -66,7 +66,7 @@ class NhlDataServiceTest {
     }
 
     @Test
-    void getCurrentSeasonStr_withDateBeforePreseason_returnsOlderSeason() throws IOException {
+    void getSeasonForDate_withDateBeforePreseason_returnsOlderSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate beforePreseason = LocalDate.of(2024, 9, 1);
 
@@ -76,7 +76,7 @@ class NhlDataServiceTest {
     }
 
     @Test
-    void getCurrentSeasonStr_withDateOnPreseasonStart_returnsCorrectSeason() throws IOException {
+    void getSeasonForDate_withDateOnPreseasonStart_returnsCorrectSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2024, 9, 21);
 
@@ -86,7 +86,7 @@ class NhlDataServiceTest {
     }
 
     @Test
-    void getCurrentSeasonStr_seasonWithNoPreseason_returnsCorrectSeason() throws IOException {
+    void getSeasonForDate_seasonWithNoPreseason_returnsCorrectSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2022, 10, 21);
 
@@ -96,7 +96,7 @@ class NhlDataServiceTest {
     }
 
     @Test
-    void getCurrentSeasonStr_withDateOutsideOldestSeason_returnsCorrectSeason() throws IOException {
+    void getSeasonForDate_withDateOutsideOldestSeason_returnsCorrectSeason() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2019, 10, 21);
 
@@ -106,7 +106,7 @@ class NhlDataServiceTest {
     }
 
     @Test
-    void getCurrentSeasonStr_testLoop() throws IOException {
+    void getSeasonForDate_testLoop() throws IOException {
         List<Season> seasons = loadSeasonsFromJson();
         LocalDate preseasonStart = LocalDate.of(2022, 9, 21);
 
@@ -116,7 +116,7 @@ class NhlDataServiceTest {
     }
 
     @Test
-    void getCurrentSeasonStr_noArgs_returnsSeasonBasedOnCurrentDate() throws IOException, NoSuchMethodException,
+    void getCurrentSeason_noArgs_returnsSeasonBasedOnCurrentDate() throws IOException, NoSuchMethodException,
             InvocationTargetException, IllegalAccessException {
         List<Season> seasons = loadSeasonsFromJson();
         when(seasonRepository.findAll(any(Sort.class))).thenReturn(seasons);
