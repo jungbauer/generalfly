@@ -266,4 +266,36 @@ public class NhlDataService {
 
         return seasonGames;
     }
+
+    private String getCurrentSeasonStr(LocalDate currentDate, List<Season> seasons) {
+        int i = 0;
+        String currentSeason = "20252026";
+
+        // Comparison done in pairs. B is the older season.
+        do {
+            Season testSeasonA = seasons.get(i);
+            Season testSeasonB = seasons.get(i+1);
+            LocalDate testDateA = testSeasonA.getPreseasonStartDate() != null ? testSeasonA.getPreseasonStartDate() : testSeasonA.getStartDate();
+            LocalDate testDateB = testSeasonB.getPreseasonStartDate() != null ? testSeasonB.getPreseasonStartDate() : testSeasonB.getStartDate();
+
+            if (currentDate.isEqual(testDateA) || currentDate.isAfter(testDateA)) {
+                currentSeason = String.valueOf(testSeasonA.getNhlId());
+                break;
+            }
+            if (currentDate.isEqual(testDateB) || (currentDate.isAfter(testDateB) && currentDate.isBefore(testDateA))) {
+                currentSeason = String.valueOf(testSeasonB.getNhlId());
+                break;
+            }
+
+            i++;
+        } while(i < (seasons.size() - 1));
+
+        return currentSeason;
+    }
+
+    private String getCurrentSeasonStr() {
+        List<Season> seasons = seasonRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate"));
+        LocalDate currentDate = LocalDate.now();
+        return getCurrentSeasonStr(currentDate, seasons);
+    }
 }
