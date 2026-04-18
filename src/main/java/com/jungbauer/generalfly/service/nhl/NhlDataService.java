@@ -271,6 +271,13 @@ public class NhlDataService {
         int i = 0;
         String currentSeason = "20252026";
 
+        // Check oldest season
+        Season oldestSeason = seasons.get(seasons.size()-1);
+        LocalDate oldestDate = oldestSeason.getPreseasonStartDate() != null ? oldestSeason.getPreseasonStartDate() : oldestSeason.getStartDate();
+        if (currentDate.isBefore(oldestDate)) {
+            return String.valueOf(oldestSeason.getNhlId());
+        }
+
         // Comparison done in pairs. B is the older season.
         do {
             Season testSeasonA = seasons.get(i);
