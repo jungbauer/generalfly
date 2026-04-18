@@ -267,37 +267,44 @@ public class NhlDataService {
         return seasonGames;
     }
 
-    String getSeasonForDate(LocalDate currentDate, List<Season> seasons) {
+    /**
+     * Finds a season corresponding to testDate in the given seasons.
+     * It is assumed that seasons is sorted with the most recent season first.
+     * @param testDate Date to test against.
+     * @param seasons List of seasons to consider.
+     * @return String season code, e.g. 20252026
+     */
+    String getSeasonForDate(LocalDate testDate, List<Season> seasons) {
         int i = 0;
-        String currentSeason = "20252026";
+        String foundSeason = "20252026";
 
         // Check oldest season
         Season oldestSeason = seasons.get(seasons.size()-1);
-        LocalDate oldestDate = oldestSeason.getPreseasonStartDate() != null ? oldestSeason.getPreseasonStartDate() : oldestSeason.getStartDate();
-        if (currentDate.isBefore(oldestDate)) {
+        LocalDate oldestStartDate = oldestSeason.getPreseasonStartDate() != null ? oldestSeason.getPreseasonStartDate() : oldestSeason.getStartDate();
+        if (testDate.isBefore(oldestStartDate)) {
             return String.valueOf(oldestSeason.getNhlId());
         }
 
-        // Comparison done in pairs. B is the older season.
+        // Comparison done in pairs. Moving backwards in time. Currently chosen season vs the previous season.
         do {
-            Season testSeasonA = seasons.get(i);
-            Season testSeasonB = seasons.get(i+1);
-            LocalDate testDateA = testSeasonA.getPreseasonStartDate() != null ? testSeasonA.getPreseasonStartDate() : testSeasonA.getStartDate();
-            LocalDate testDateB = testSeasonB.getPreseasonStartDate() != null ? testSeasonB.getPreseasonStartDate() : testSeasonB.getStartDate();
+            Season currSeason = seasons.get(i);
+            Season prevSeason = seasons.get(i+1);
+            LocalDate currStartDate = currSeason.getPreseasonStartDate() != null ? currSeason.getPreseasonStartDate() : currSeason.getStartDate();
+            LocalDate prevStartDate = prevSeason.getPreseasonStartDate() != null ? prevSeason.getPreseasonStartDate() : prevSeason.getStartDate();
 
-            if (!currentDate.isBefore(testDateA)) {
-                currentSeason = String.valueOf(testSeasonA.getNhlId());
+            if (!testDate.isBefore(currStartDate)) {
+                foundSeason = String.valueOf(currSeason.getNhlId());
                 break;
             }
-            if (currentDate.isEqual(testDateB) || currentDate.isAfter(testDateB)) {
-                currentSeason = String.valueOf(testSeasonB.getNhlId());
+            if (testDate.isEqual(prevStartDate) || testDate.isAfter(prevStartDate)) {
+                foundSeason = String.valueOf(prevSeason.getNhlId());
                 break;
             }
 
             i++;
         } while(i < (seasons.size() - 1));
 
-        return currentSeason;
+        return foundSeason;
     }
 
     private String getCurrentSeason() {
