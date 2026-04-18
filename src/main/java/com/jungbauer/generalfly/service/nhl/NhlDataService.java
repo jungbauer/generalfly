@@ -285,11 +285,11 @@ public class NhlDataService {
             LocalDate testDateA = testSeasonA.getPreseasonStartDate() != null ? testSeasonA.getPreseasonStartDate() : testSeasonA.getStartDate();
             LocalDate testDateB = testSeasonB.getPreseasonStartDate() != null ? testSeasonB.getPreseasonStartDate() : testSeasonB.getStartDate();
 
-            if (currentDate.isEqual(testDateA) || currentDate.isAfter(testDateA)) {
+            if (!currentDate.isBefore(testDateA)) {
                 currentSeason = String.valueOf(testSeasonA.getNhlId());
                 break;
             }
-            if (currentDate.isEqual(testDateB) || (currentDate.isAfter(testDateB) && currentDate.isBefore(testDateA))) {
+            if (currentDate.isEqual(testDateB) || currentDate.isAfter(testDateB)) {
                 currentSeason = String.valueOf(testSeasonB.getNhlId());
                 break;
             }
