@@ -115,9 +115,7 @@ class NhlDataServiceTest {
         List<Season> emptySeason = new ArrayList<>();
         when(seasonRepository.findAll(any(Sort.class))).thenReturn(emptySeason);
 
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            nhlDataService.getSeasonForDate(testDate);
-        });
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> nhlDataService.getSeasonForDate(testDate));
 
         assertEquals("Seasons list must not be null or empty", exception.getMessage());
     }
@@ -127,9 +125,7 @@ class NhlDataServiceTest {
         LocalDate testDate = LocalDate.of(2019, 10, 21);
         when(seasonRepository.findAll(any(Sort.class))).thenReturn(null);
 
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            nhlDataService.getSeasonForDate(testDate);
-        });
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> nhlDataService.getSeasonForDate(testDate));
 
         assertEquals("Seasons list must not be null or empty", exception.getMessage());
     }
@@ -138,9 +134,7 @@ class NhlDataServiceTest {
     void getSeasonForDate_withNullDate_throwsCorrectError() {
         when(seasonRepository.findAll(any(Sort.class))).thenReturn(seasons);
 
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            nhlDataService.getSeasonForDate(null);
-        });
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> nhlDataService.getSeasonForDate(null));
 
         assertEquals("TestDate must not be null", exception.getMessage());
     }
@@ -169,6 +163,7 @@ class NhlDataServiceTest {
 
     private List<Season> loadSeasonsFromJson() throws IOException {
         InputStream inputStream = getClass().getResourceAsStream("/nhl/seasons.json");
-        return objectMapper.readValue(inputStream, new TypeReference<List<Season>>() {});
+        return objectMapper.readValue(inputStream, new TypeReference<>() {
+        });
     }
 }
