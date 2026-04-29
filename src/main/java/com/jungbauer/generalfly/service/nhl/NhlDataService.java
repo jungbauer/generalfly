@@ -274,7 +274,14 @@ public class NhlDataService {
      * @param seasons List of seasons to consider.
      * @return String season code, e.g. 20252026
      */
-    String getSeasonForDate(LocalDate testDate, List<Season> seasons) {
+    private String getSeasonForDate(LocalDate testDate, List<Season> seasons) {
+        if (seasons == null || seasons.isEmpty()) {
+            throw new IllegalArgumentException("Seasons list must not be null or empty");
+        }
+        if (testDate == null) {
+            throw new IllegalArgumentException("TestDate must not be null");
+        }
+
         int i = 0;
         String foundSeason = "20252026";
 
@@ -311,9 +318,14 @@ public class NhlDataService {
      * Gets the season matching LocalDate.now() from the database.
      * @return String season code, e.g. 20252026
      */
-    private String getCurrentSeason() {
+    public String getCurrentSeason() {
         List<Season> seasons = seasonRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate"));
         LocalDate currentDate = LocalDate.now();
         return getSeasonForDate(currentDate, seasons);
+    }
+
+    public String getSeasonForDate(LocalDate date) {
+        List<Season> seasons = seasonRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate"));
+        return getSeasonForDate(date, seasons);
     }
 }

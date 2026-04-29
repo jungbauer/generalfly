@@ -42,5 +42,16 @@
     "preseasonStartDate": "2021-09-26",
     "regularSeasonEndDate": "2022-04-29",
     "collected": true
+  },
+  {
+    "id": 5,
+    "nhlId": 20202021,
+    "formattedSeasonId": "2020-2021",
+    "seasonOrdinal": 103,
+    "startDate": "2021-01-13",
+    "endDate": "2021-07-07",
+    "preseasonStartDate": null,
+    "regularSeasonEndDate": "2021-05-19",
+    "collected": true
   }
 ]
