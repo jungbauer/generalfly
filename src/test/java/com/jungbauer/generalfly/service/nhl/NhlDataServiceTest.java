@@ -140,6 +140,16 @@ class NhlDataServiceTest {
     }
 
     @Test
+    void getSeasonForDate_withFutureDate_returnsCurrentSeason() {
+        LocalDate duringSeason = LocalDate.of(2027, 1, 15);
+        when(seasonRepository.findAll(any(Sort.class))).thenReturn(seasons);
+
+        String result = nhlDataService.getSeasonForDate(duringSeason);
+
+        assertEquals("20242025", result);
+    }
+
+    @Test
     void getSeasonForDate_testLoop() {
         LocalDate preseasonStart = LocalDate.of(2022, 9, 21);
         when(seasonRepository.findAll(any(Sort.class))).thenReturn(seasons);
