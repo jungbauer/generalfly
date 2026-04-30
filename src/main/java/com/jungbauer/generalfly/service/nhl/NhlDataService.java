@@ -266,4 +266,66 @@ public class NhlDataService {
 
         return seasonGames;
     }
+
+    /**
+     * Finds a season corresponding to testDate in the given seasons.
+     * It is assumed that seasons is sorted with the most recent season first.
+     * @param testDate Date to test against.
+     * @param seasons List of seasons to consider.
+     * @return String season code, e.g. 20252026
+     */
+    private String getSeasonForDate(LocalDate testDate, List<Season> seasons) {
+        if (seasons == null || seasons.isEmpty()) {
+            throw new IllegalArgumentException("Seasons list must not be null or empty");
+        }
+        if (testDate == null) {
+            throw new IllegalArgumentException("TestDate must not be null");
+        }
+
+        int i = 0;
+        String foundSeason = "20252026";
+
+        // Check oldest season
+        Season oldestSeason = seasons.get(seasons.size()-1);
+        LocalDate oldestStartDate = oldestSeason.getPreseasonStartDate() != null ? oldestSeason.getPreseasonStartDate() : oldestSeason.getStartDate();
+        if (testDate.isBefore(oldestStartDate)) {
+            return String.valueOf(oldestSeason.getNhlId());
+        }
+
+        // Comparison done in pairs. Moving backwards in time. Currently chosen season vs the previous season.
+        do {
+            Season currSeason = seasons.get(i);
+            Season prevSeason = seasons.get(i+1);
+            LocalDate currStartDate = currSeason.getPreseasonStartDate() != null ? currSeason.getPreseasonStartDate() : currSeason.getStartDate();
+            LocalDate prevStartDate = prevSeason.getPreseasonStartDate() != null ? prevSeason.getPreseasonStartDate() : prevSeason.getStartDate();
+
+            if (!testDate.isBefore(currStartDate)) {
+                foundSeason = String.valueOf(currSeason.getNhlId());
+                break;
+            }
+            if (testDate.isEqual(prevStartDate) || testDate.isAfter(prevStartDate)) {
+                foundSeason = String.valueOf(prevSeason.getNhlId());
+                break;
+            }
+
+            i++;
+        } while(i < (seasons.size() - 1));
+
+        return foundSeason;
+    }
+
+    /**
+     * Gets the season matching LocalDate.now() from the database.
+     * @return String season code, e.g. 20252026
+     */
+    public String getCurrentSeason() {
+        List<Season> seasons = seasonRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate"));
+        LocalDate currentDate = LocalDate.now();
+        return getSeasonForDate(currentDate, seasons);
+    }
+
+    public String getSeasonForDate(LocalDate date) {
+        List<Season> seasons = seasonRepository.findAll(Sort.by(Sort.Direction.DESC, "startDate"));
+        return getSeasonForDate(date, seasons);
+    }
 }

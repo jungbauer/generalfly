@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "nhlId": 20242025,
+    "formattedSeasonId": "2024-2025",
+    "seasonOrdinal": 107,
+    "startDate": "2024-10-04",
+    "endDate": "2025-06-30",
+    "preseasonStartDate": "2024-09-21",
+    "regularSeasonEndDate": "2025-04-17",
+    "collected": true
+  },
+  {
+    "id": 2,
+    "nhlId": 20232024,
+    "formattedSeasonId": "2023-2024",
+    "seasonOrdinal": 106,
+    "startDate": "2023-10-10",
+    "endDate": "2024-06-30",
+    "preseasonStartDate": "2023-09-23",
+    "regularSeasonEndDate": "2024-04-18",
+    "collected": true
+  },
+  {
+    "id": 3,
+    "nhlId": 20222023,
+    "formattedSeasonId": "2022-2023",
+    "seasonOrdinal": 105,
+    "startDate": "2022-10-07",
+    "endDate": "2023-06-30",
+    "preseasonStartDate": null,
+    "regularSeasonEndDate": "2023-04-14",
+    "collected": true
+  },
+  {
+    "id": 4,
+    "nhlId": 20212022,
+    "formattedSeasonId": "2021-2022",
+    "seasonOrdinal": 104,
+    "startDate": "2021-10-12",
+    "endDate": "2022-06-30",
+    "preseasonStartDate": "2021-09-26",
+    "regularSeasonEndDate": "2022-04-29",
+    "collected": true
+  },
+  {
+    "id": 5,
+    "nhlId": 20202021,
+    "formattedSeasonId": "2020-2021",
+    "seasonOrdinal": 103,
+    "startDate": "2021-01-13",
+    "endDate": "2021-07-07",
+    "preseasonStartDate": null,
+    "regularSeasonEndDate": "2021-05-19",
+    "collected": true
+  }
+]
