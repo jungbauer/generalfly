@@ -155,7 +155,7 @@ public class GameUpdateService {
             needsUpdate = true;
         }
 
-        if (!"FUT".equals(apiGame.getGameState())) {
+        if (!"FUT".equals(apiGame.getGameState()) && !apiGame.getGameState().equals("PRE")) {
             String apiOutcome = apiGame.getGameOutcome() != null ? apiGame.getGameOutcome().getLastPeriodType() : null;
             Integer apiHomeScore = apiGame.getHomeTeam() != null ? apiGame.getHomeTeam().getScore() : null;
             Integer apiAwayScore = apiGame.getAwayTeam() != null ? apiGame.getAwayTeam().getScore() : null;
