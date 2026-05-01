@@ -20,13 +20,16 @@ public class GameUpdateService {
     private final NhlApiService nhlApiService;
     private final GameRepository gameRepository;
     private final DumpLogService dumpLogService;
+    private final NhlDataService nhlDataService;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public GameUpdateService(NhlApiService nhlApiService, GameRepository gameRepository, DumpLogService dumpLogService) {
+    public GameUpdateService(NhlApiService nhlApiService, GameRepository gameRepository, DumpLogService dumpLogService,
+                             NhlDataService nhlDataService) {
         this.nhlApiService = nhlApiService;
         this.gameRepository = gameRepository;
         this.dumpLogService = dumpLogService;
+        this.nhlDataService = nhlDataService;
     }
 
     @Getter
@@ -93,7 +96,7 @@ public class GameUpdateService {
 
                 for (ScheduleDate.Game apiGame : gameDay.getGames()) {
                     gamesChecked++;
-                    boolean updated = updateGameIfChanged(apiGame);
+                    boolean updated = updateGameIfChanged(apiGame, gameDate);
                     if (updated) {
                         gamesUpdated++;
                     }
@@ -134,14 +137,15 @@ public class GameUpdateService {
         log.info("Completed game update process: checked {} games total, updated {} games", totalChecked, totalUpdated);
     }
 
-    private boolean updateGameIfChanged(ScheduleDate.Game apiGame) {
+    private boolean updateGameIfChanged(ScheduleDate.Game apiGame, LocalDate gameDate) {
         Game dbGame = gameRepository.findByNhlGameId(apiGame.getId());
 
         if (dbGame == null) {
-            String msg = "Game " + apiGame.getId() + " not found in database, skipping update";
+            String msg = "Game " + apiGame.getId() + " not found in database, adding new game";
             log.debug(msg);
             dumpLogService.logMessage("GameUpdateService", "updateGameIfChanged", msg);
-            return false;
+            nhlDataService.saveNewGame(apiGame, gameDate);
+            return true;
         }
 
         boolean needsUpdate = false;

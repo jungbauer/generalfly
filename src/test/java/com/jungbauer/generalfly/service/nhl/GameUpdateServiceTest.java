@@ -30,13 +30,16 @@ class GameUpdateServiceTest {
     @Mock
     private DumpLogService dumpLogService;
 
+    @Mock
+    private NhlDataService nhlDataService;
+
     private GameUpdateService gameUpdateService;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @BeforeEach
     void setUp() {
-        gameUpdateService = new GameUpdateService(nhlApiService, gameRepository, dumpLogService);
+        gameUpdateService = new GameUpdateService(nhlApiService, gameRepository, dumpLogService, nhlDataService);
     }
 
     @Test
