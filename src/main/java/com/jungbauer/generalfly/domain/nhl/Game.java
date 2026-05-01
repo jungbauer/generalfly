@@ -37,6 +37,7 @@ public class Game {
     private Integer homeTeamScore;
     private Integer awayTeamScore;
     private LocalDate gameDate;
+    private String seriesStatus;
 
     @ManyToOne
     @JoinColumn(name = "away_team_id")
