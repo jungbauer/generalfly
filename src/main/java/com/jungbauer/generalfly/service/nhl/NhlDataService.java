@@ -1,5 +1,7 @@
 package com.jungbauer.generalfly.service.nhl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jungbauer.generalfly.domain.nhl.*;
 import com.jungbauer.generalfly.dto.nhl.api.ScheduleDate;
 import com.jungbauer.generalfly.dto.nhl.api.Seasons;
@@ -10,6 +12,7 @@ import com.jungbauer.generalfly.dto.nhl.uiapp.GamesAroundToday;
 import com.jungbauer.generalfly.dto.nhl.uiapp.SeasonGames;
 import com.jungbauer.generalfly.dto.nhl.uiapp.SeasonView;
 import com.jungbauer.generalfly.repository.nhl.*;
+import com.jungbauer.generalfly.service.DumpLogService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +32,21 @@ public class NhlDataService {
     private final SeasonRepository seasonRepository;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final DumpLogService dumpLogService;
 
     public NhlDataService(NhlApiService nhlApiService, TeamRepository teamRepository,
                           GameRepository gameRepository, ConferenceRepository conferenceRepository,
-                          DivisionRepository divisionRepository, SeasonRepository seasonRepository) {
+                          DivisionRepository divisionRepository, SeasonRepository seasonRepository,
+
+                          DumpLogService dumpLogService) {
         this.nhlApiService = nhlApiService;
         this.teamRepository = teamRepository;
         this.gameRepository = gameRepository;
         this.conferenceRepository = conferenceRepository;
         this.divisionRepository = divisionRepository;
         this.seasonRepository = seasonRepository;
+        this.dumpLogService = dumpLogService;
     }
 
     private void saveFromGamesWeek(List<ScheduleDate.GameDay> gameWeekData) {
@@ -49,27 +57,41 @@ public class NhlDataService {
                 // try to find the game
                 Game dbGame = gameRepository.findByNhlGameId(game.getId());
                 if (dbGame == null) {
-                    // save new game
-                    Game newGame = new Game();
-                    newGame.setNhlGameId(game.getId());
-                    newGame.setSeason(game.getSeason());
-                    newGame.setGameDate(gameDate);
-                    newGame.setGameType(game.getGameType());
-                    newGame.setGameState(game.getGameState());
-                    newGame.setHomeTeam(getAndSaveTeam(game.getHomeTeam()));
-                    newGame.setAwayTeam(getAndSaveTeam(game.getAwayTeam()));
-
-                    // Future games, FUT, do not have an outcome or scores yet
-                    if (!game.getGameState().equals("FUT")) {
-                        newGame.setGameOutcome(game.getGameOutcome().getLastPeriodType());
-                        newGame.setHomeTeamScore(game.getHomeTeam().getScore());
-                        newGame.setAwayTeamScore(game.getAwayTeam().getScore());
-                    }
-
-                    gameRepository.save(newGame);
+                    saveNewGame(game, gameDate);
                 }
             }
         }
+    }
+
+    public void saveNewGame(ScheduleDate.Game game, LocalDate gameDate) {
+        // save new game
+        Game newGame = new Game();
+        newGame.setNhlGameId(game.getId());
+        newGame.setSeason(game.getSeason());
+        newGame.setGameDate(gameDate);
+        newGame.setGameType(game.getGameType());
+        newGame.setGameState(game.getGameState());
+        newGame.setHomeTeam(getAndSaveTeam(game.getHomeTeam()));
+        newGame.setAwayTeam(getAndSaveTeam(game.getAwayTeam()));
+
+        // Future games, FUT, do not have an outcome or scores yet
+        if (!game.getGameState().equals("FUT")) {
+            newGame.setGameOutcome(game.getGameOutcome().getLastPeriodType());
+            newGame.setHomeTeamScore(game.getHomeTeam().getScore());
+            newGame.setAwayTeamScore(game.getAwayTeam().getScore());
+        }
+
+        // Checking playoff series object
+        if (game.getGameType() == 3 && game.getSeriesStatus() != null) {
+            try {
+                String seriesJsonStr = objectMapper.writeValueAsString(game.getSeriesStatus());
+                newGame.setSeriesStatus(seriesJsonStr);
+            } catch (JsonProcessingException e) {
+                dumpLogService.logMessage("NhlDataService", "saveNewGame", "JSON error: " + e.getMessage());
+            }
+        }
+
+        gameRepository.save(newGame);
     }
 
 

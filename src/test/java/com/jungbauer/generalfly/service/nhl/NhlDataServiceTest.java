@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jungbauer.generalfly.domain.nhl.Season;
 import com.jungbauer.generalfly.repository.nhl.*;
+import com.jungbauer.generalfly.service.DumpLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +47,9 @@ class NhlDataServiceTest {
     @Mock
     private SeasonRepository seasonRepository;
 
+    @Mock
+    private DumpLogService dumpLogService;
+
     private NhlDataService nhlDataService;
     private ObjectMapper objectMapper;
     private List<Season> seasons;
@@ -53,7 +57,7 @@ class NhlDataServiceTest {
     @BeforeEach
     void setUp() throws IOException {
         nhlDataService = new NhlDataService(nhlApiService, teamRepository, gameRepository,
-                conferenceRepository, divisionRepository, seasonRepository);
+                conferenceRepository, divisionRepository, seasonRepository, dumpLogService);
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         seasons = loadSeasonsFromJson();
