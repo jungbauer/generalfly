@@ -74,8 +74,8 @@ public class NhlDataService {
         newGame.setHomeTeam(getAndSaveTeam(game.getHomeTeam()));
         newGame.setAwayTeam(getAndSaveTeam(game.getAwayTeam()));
 
-        // Future games, FUT, do not have an outcome or scores yet
-        if (!game.getGameState().equals("FUT")) {
+        // Future games, FUT, and pregame, PRE, do not have an outcome or scores yet
+        if (!game.getGameState().equals("FUT") && !game.getGameState().equals("PRE")) {
             newGame.setGameOutcome(game.getGameOutcome().getLastPeriodType());
             newGame.setHomeTeamScore(game.getHomeTeam().getScore());
             newGame.setAwayTeamScore(game.getAwayTeam().getScore());
