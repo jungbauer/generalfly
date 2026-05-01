@@ -63,6 +63,22 @@ public class ScheduleDate {
         private Boolean shootoutInUse;
         private Boolean otInUse;
         private Boolean tiesInUse;
+        private SeriesStatus seriesStatus;
+    }
+
+    @Getter
+    @Setter
+    public static class SeriesStatus {
+        private Integer round;
+        private String seriesAbbrev;
+        private String seriesTitle;
+        private String seriesLetter;
+        private Integer neededToWin;
+        private String topSeedTeamAbbrev;
+        private Integer topSeedWins;
+        private String bottomSeedTeamAbbrev;
+        private Integer bottomSeedWins;
+        private Integer gameNumberOfSeries;
     }
 
     @Getter
