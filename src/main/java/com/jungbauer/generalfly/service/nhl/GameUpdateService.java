@@ -113,9 +113,11 @@ public class GameUpdateService {
         }
     }
 
-    @Scheduled(cron = "0 0 5 * * ?")
+    //@Scheduled(cron = "0 0 5 * * ?")
     public void updateRecentGames() {
         log.info("Starting scheduled game update process");
+
+        //todo this should check if it's within a season, and only run if it is.
 
         LocalDate today = LocalDate.now();
         int totalChecked = 0;
@@ -155,6 +157,7 @@ public class GameUpdateService {
             needsUpdate = true;
         }
 
+        //todo needs to deal with LIVE too
         if (!"FUT".equals(apiGame.getGameState()) && !apiGame.getGameState().equals("PRE")) {
             String apiOutcome = apiGame.getGameOutcome() != null ? apiGame.getGameOutcome().getLastPeriodType() : null;
             Integer apiHomeScore = apiGame.getHomeTeam() != null ? apiGame.getHomeTeam().getScore() : null;
