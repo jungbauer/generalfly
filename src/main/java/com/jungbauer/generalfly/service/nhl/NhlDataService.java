@@ -74,6 +74,7 @@ public class NhlDataService {
         newGame.setHomeTeam(getAndSaveTeam(game.getHomeTeam()));
         newGame.setAwayTeam(getAndSaveTeam(game.getAwayTeam()));
 
+        //todo needs to deal with LIVE too
         // Future games, FUT, and pregame, PRE, do not have an outcome or scores yet
         if (!game.getGameState().equals("FUT") && !game.getGameState().equals("PRE")) {
             newGame.setGameOutcome(game.getGameOutcome().getLastPeriodType());
@@ -152,6 +153,10 @@ public class NhlDataService {
         return "Populated divisions and conferences";
     }
 
+    /**
+     * Calls the NHL API to get a list of seasons. Adds the seasons not present in the DB.
+     * @return String A sentence with the number of new seasons added.
+     */
     public String populateNhlSeasons() {
         int savedTotal = 0;
         Seasons detailedSeasons = nhlApiService.getDetailedSeasons();

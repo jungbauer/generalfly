@@ -18,6 +18,16 @@
 
         <div class="card mt-4">
             <div class="card-body">
+                <h5 class="card-title">Populate Season Table</h5>
+
+                <form th:action="@{/admin/popseasons}" method="get">
+                    <button type="submit" class="btn btn-primary">Populate Seasons</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
                 <h5 class="card-title">Collect Season Data</h5>
 
                 <form th:action="@{/admin/nhl-data/collect}" method="post">

@@ -66,9 +66,15 @@ public class AdminController {
         return "redirect:/admin/nhl-data";
     }
 
+    /**
+     * Trigger to populate the season table. It lists NHL seasons with date info for each.
+     * @return String A sentence with the number of new seasons added.
+     */
     @GetMapping("/admin/popseasons")
-    public ResponseEntity<String> populateNhlSeasons() {
-        return ResponseEntity.ok().body(nhlDataService.populateNhlSeasons());
+    public String populateNhlSeasons(RedirectAttributes redirectAttributes) {
+        String message = nhlDataService.populateNhlSeasons();
+        redirectAttributes.addFlashAttribute("successMessage", message);
+        return "redirect:/admin/nhl-data";
     }
 
     @GetMapping("/admin/popdivconf")
